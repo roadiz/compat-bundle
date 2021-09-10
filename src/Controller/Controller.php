@@ -1,0 +1,357 @@
+<?php
+declare(strict_types=1);
+
+namespace RZ\Roadiz\CompatBundle\Controller;
+
+use Doctrine\ORM\EntityManager;
+use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
+use RZ\Roadiz\Core\Entities\NodesSources;
+use RZ\Roadiz\Core\Entities\Translation;
+use RZ\Roadiz\Core\Exceptions\NoTranslationAvailableException;
+use RZ\Roadiz\Core\ListManagers\EntityListManager;
+use RZ\Roadiz\Core\ListManagers\EntityListManagerInterface;
+use RZ\Roadiz\Core\Repositories\TranslationRepository;
+use RZ\Roadiz\Preview\PreviewResolverInterface;
+use RZ\Roadiz\Utils\ContactFormManager;
+use RZ\Roadiz\Utils\EmailManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
+use Twig\Error\RuntimeError;
+
+abstract class Controller extends AbstractController
+{
+    /**
+     * Get current request.
+     *
+     * @return Request|null
+     */
+    public function getRequest()
+    {
+        /** @var RequestStack $requestStack */
+        $requestStack = $this->get(RequestStack::class);
+        return $requestStack->getCurrentRequest();
+    }
+
+    /**
+     * @return Security
+     */
+    public function getAuthorizationChecker(): Security
+    {
+        return $this->get(Security::class);
+    }
+
+    /**
+     * Alias for `$this->container['securityTokenStorage']`.
+     *
+     * @return TokenStorageInterface
+     */
+    public function getTokenStorage()
+    {
+        return $this->get(TokenStorageInterface::class);
+    }
+
+    /**
+     * Alias for `$this->container['em']`.
+     *
+     * @return EntityManager
+     */
+    public function em()
+    {
+        return $this->getDoctrine()->getManager();
+    }
+
+    /**
+     * @return Translator
+     */
+    public function getTranslator(): Translator
+    {
+        return $this->get(TranslatorInterface::class);
+    }
+
+    /**
+     * @return Environment
+     */
+    public function getTwig(): Environment
+    {
+        return $this->get(Environment::class);
+    }
+
+    /**
+     * Wrap `$this->container['urlGenerator']->generate`
+     *
+     * @param string|NodesSources $route
+     * @param mixed  $parameters
+     * @param int $referenceType
+     * @return string
+     */
+    public function generateUrl($route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
+    {
+        if ($route instanceof NodesSources) {
+            return $this->get('urlGenerator')->generate(
+                RouteObjectInterface::OBJECT_BASED_ROUTE_NAME,
+                array_merge($parameters, [RouteObjectInterface::ROUTE_OBJECT => $route]),
+                $referenceType
+            );
+        }
+        return parent::generateUrl($route, $parameters, $referenceType);
+    }
+
+    /**
+     * @return string
+     */
+    public static function getCalledClass()
+    {
+        $className = get_called_class();
+        if (strpos($className, "\\") !== 0) {
+            $className = "\\" . $className;
+        }
+        return $className;
+    }
+
+    /**
+     * Validate a request against a given ROLE_* and throws
+     * an AccessDeniedException exception.
+     *
+     * @param string $role
+     * @deprecated Use denyAccessUnlessGranted() method instead
+     * @throws AccessDeniedException
+     */
+    public function validateAccessForRole($role)
+    {
+        if (!$this->isGranted($role)) {
+            throw new AccessDeniedException("You don't have access to this page:" . $role);
+        }
+    }
+
+    /**
+     * Custom route for redirecting routes with a trailing slash.
+     *
+     * @param  Request $request
+     *
+     * @return RedirectResponse
+     */
+    public function removeTrailingSlashAction(Request $request)
+    {
+        $pathInfo = $request->getPathInfo();
+        $requestUri = $request->getRequestUri();
+
+        $url = str_replace($pathInfo, rtrim($pathInfo, ' /'), $requestUri);
+
+        return $this->redirect($url, Response::HTTP_MOVED_PERMANENTLY);
+    }
+
+    /**
+     * Make translation variable with the good localization.
+     *
+     * @param Request $request
+     * @param string $_locale
+     *
+     * @return TranslationInterface
+     * @throws NoTranslationAvailableException
+     */
+    protected function bindLocaleFromRoute(Request $request, $_locale = null): TranslationInterface
+    {
+        /*
+         * If you use a static route for Home page
+         * we need to grab manually language.
+         *
+         * Get language from static route
+         */
+        $translation = $this->findTranslationForLocale($_locale);
+        $request->setLocale($translation->getPreferredLocale());
+        return $translation;
+    }
+
+    /**
+     * @param string|null $_locale
+     *
+     * @return TranslationInterface
+     */
+    protected function findTranslationForLocale(string $_locale = null): TranslationInterface
+    {
+        if (null === $_locale) {
+            return $this->getDoctrine()->getRepository(Translation::class)->findDefault();
+        }
+        /** @var TranslationRepository $repository */
+        $repository = $this->getDoctrine()->getRepository(Translation::class);
+
+        if ($this->get(PreviewResolverInterface::class)->isPreview()) {
+            $translation = $repository->findOneByLocaleOrOverrideLocale($_locale);
+        } else {
+            $translation = $repository->findOneAvailableByLocaleOrOverrideLocale($_locale);
+        }
+
+        if (null !== $translation) {
+            return $translation;
+        }
+
+        throw new NoTranslationAvailableException();
+    }
+
+    /**
+     * Return a Response from a template string with its rendering assignation.
+     *
+     * @see http://api.symfony.com/2.6/Symfony/Bundle/FrameworkBundle/Controller/Controller.html#method_render
+     *
+     * @param string        $view Template file path
+     * @param array         $parameters Twig assignation array
+     * @param Response|null $response Optional Response object to customize response parameters
+     * @param string        $namespace Twig loader namespace
+     *
+     * @return Response
+     * @throws RuntimeError
+     */
+    public function render(string $view, array $parameters = [], Response $response = null, string $namespace = ''): Response
+    {
+        try {
+            return parent::render($view, $parameters, $response);
+        } catch (RuntimeError $e) {
+            if ($e->getPrevious() instanceof \RZ\Roadiz\CoreBundle\Exception\ForceResponseException) {
+                return $e->getPrevious()->getResponse();
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * @param string $view
+     * @param string $namespace
+     * @return string
+     */
+    protected function getNamespacedView(string $view, string $namespace = ''): string
+    {
+        if ($namespace !== "" && $namespace !== "/") {
+            return '@' . $namespace . '/' . $view;
+        }
+
+        return $view;
+    }
+
+    /**
+     * @param array $data
+     * @param int $httpStatus
+     * @return JsonResponse
+     */
+    public function renderJson(array $data = [], int $httpStatus = JsonResponse::HTTP_OK)
+    {
+        return $this->json($data, $httpStatus);
+    }
+
+    /**
+     * Throw a NotFoundException if request format is not accepted.
+     *
+     * @param Request $request
+     * @param array $acceptableFormats
+     */
+    protected function denyResourceExceptForFormats(Request $request, array $acceptableFormats = ['html'])
+    {
+        if (!in_array($request->get('_format', 'html'), $acceptableFormats)) {
+            throw $this->createNotFoundException(sprintf(
+                'Resource not found for %s format',
+                $request->get('_format', 'html')
+            ));
+        }
+    }
+
+    /**
+     * Creates and returns a form builder instance.
+     *
+     * @param string $name Form name
+     * @param mixed $data The initial data for the form
+     * @param array $options Options for the form
+     *
+     * @return FormBuilderInterface
+     */
+    protected function createNamedFormBuilder(string $name = 'form', $data = null, array $options = [])
+    {
+        /** @var FormFactoryInterface $formFactory */
+        $formFactory = $this->get(FormFactoryInterface::class);
+        return $formFactory->createNamedBuilder($name, FormType::class, $data, $options);
+    }
+
+
+    /**
+     * Creates and returns an EntityListManager instance.
+     *
+     * @param mixed $entity Entity class path
+     * @param array $criteria
+     * @param array $ordering
+     *
+     * @return EntityListManagerInterface
+     */
+    public function createEntityListManager($entity, array $criteria = [], array $ordering = [])
+    {
+        return new EntityListManager(
+            $this->getRequest(),
+            $this->getDoctrine()->getManager(),
+            $entity,
+            $criteria,
+            $ordering
+        );
+    }
+
+    /**
+     * Create and return a ContactFormManager to build and send contact
+     * form by email.
+     *
+     * @return ContactFormManager
+     */
+    public function createContactFormManager()
+    {
+        return $this->get(ContactFormManager::class);
+    }
+
+    /**
+     * Create and return a EmailManager to build and send emails.
+     *
+     * @return EmailManager
+     */
+    public function createEmailManager()
+    {
+        return $this->get(EmailManager::class);
+    }
+
+    /**
+     * Get a user from the tokenStorage.
+     *
+     * @return UserInterface|object|null
+     *
+     * @throws \LogicException If tokenStorage is not available
+     *
+     * @see TokenInterface::getUser()
+     */
+    protected function getUser()
+    {
+        if (!$this->has('securityTokenStorage')) {
+            throw new \LogicException('No TokenStorage has been registered in your application.');
+        }
+
+        /** @var TokenInterface|null $token */
+        $token = $this->container['securityTokenStorage']->getToken();
+        if (null === $token) {
+            return null;
+        }
+
+        $user = $token->getUser();
+
+        return \is_object($user) ? $user : null;
+    }
+}

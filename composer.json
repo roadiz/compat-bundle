@@ -1,0 +1,42 @@
+{
+    "name": "roadiz/compat-bundle",
+    "license": "MIT",
+    "keywords": [
+        "cms",
+        "backoffice",
+        "rezo zero"
+    ],
+    "authors": [
+        {
+            "name": "Ambroise Maupate",
+            "email": "ambroise@roadiz.io",
+            "homepage": "https://www.roadiz.io",
+            "role": "Lead developer"
+        }
+    ],
+    "type": "symfony-bundle",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.4",
+        "symfony/framework-bundle": "5.3.*"
+    },
+    "require-dev": {
+        "php-coveralls/php-coveralls": "^2.4",
+        "phpstan/phpstan": "^0.12.57",
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "RZ\\Roadiz\\CompatBundle\\": "src/"
+        },
+        "files": ["src/deprecated.php"]
+    }
+}
