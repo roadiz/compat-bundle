@@ -1,0 +1,41 @@
+---
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $settingsBag: '@RZ\Roadiz\CoreBundle\Bag\Settings'
+            $discoveryUri: '%env(string:OPEN_ID_DISCOVERY_URL)%'
+
+    RZ\Roadiz\OpenId\:
+        resource: '%kernel.project_dir%/vendor/roadiz/openid/src/'
+        autowire: true
+        autoconfigure: true
+        exclude:
+            - '%kernel.project_dir%/vendor/roadiz/openid/src/OpenIdServiceProvider.php'
+
+    RZ\Roadiz\Utils\EmailManager:
+        alias: RZ\Roadiz\CoreBundle\Mailer\EmailManager
+    RZ\Roadiz\Core\Handlers\NodeHandler:
+        alias: RZ\Roadiz\CoreBundle\EntityHandler\NodeHandler
+    RZ\Roadiz\Core\Handlers\NodesSourcesHandler:
+        alias: RZ\Roadiz\CoreBundle\EntityHandler\NodesSourcesHandler
+    RZ\Roadiz\Utils\Node\NodeMover:
+        alias: RZ\Roadiz\CoreBundle\Node\NodeMover
+    RZ\Roadiz\Utils\Node\UniversalDataDuplicator:
+        alias: RZ\Roadiz\CoreBundle\Node\UniversalDataDuplicator
+    RZ\Roadiz\Core\Kernel:
+        alias: Symfony\Component\HttpKernel\KernelInterface
+    Pimple\Container:
+        alias: Psr\Container\ContainerInterface
+    Doctrine\Common\Cache\CacheProvider:
+        alias: 'doctrine.orm.cache.provider.cache.doctrine.orm.default.metadata'
+
+    securityAuthenticationUtils:
+        public: true
+        alias: Symfony\Component\Security\Http\Authentication\AuthenticationUtils
+
+    em:
+        public: true
+        alias: 'doctrine'

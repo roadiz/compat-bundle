@@ -3,15 +3,22 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Controller;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
+use Psr\Log\LoggerInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
 use RZ\Roadiz\Core\Entities\NodesSources;
 use RZ\Roadiz\Core\Entities\Translation;
 use RZ\Roadiz\Core\Exceptions\NoTranslationAvailableException;
 use RZ\Roadiz\Core\ListManagers\EntityListManager;
 use RZ\Roadiz\Core\ListManagers\EntityListManagerInterface;
+use RZ\Roadiz\Core\Models\FileAwareInterface;
 use RZ\Roadiz\Core\Repositories\TranslationRepository;
+use RZ\Roadiz\CoreBundle\Bag\NodeTypes;
+use RZ\Roadiz\CoreBundle\Bag\Roles;
+use RZ\Roadiz\CoreBundle\Bag\Settings;
+use RZ\Roadiz\OpenId\OAuth2LinkGenerator;
 use RZ\Roadiz\Preview\PreviewResolverInterface;
+use RZ\Roadiz\Utils\Asset\Packages;
 use RZ\Roadiz\Utils\ContactFormManager;
 use RZ\Roadiz\Utils\EmailManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,12 +31,15 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -37,6 +47,29 @@ use Twig\Error\RuntimeError;
 
 abstract class Controller extends AbstractController
 {
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            'securityAuthenticationUtils' => AuthenticationUtils::class,
+            'urlGenerator' => UrlGeneratorInterface::class,
+            EmailManager::class => EmailManager::class,
+            'logger' => LoggerInterface::class,
+            'kernel' => KernelInterface::class,
+            'settingsBag' => Settings::class,
+            'nodeTypesBag' => NodeTypes::class,
+            'rolesBag' => Roles::class,
+            'assetPackages' => Packages::class,
+            'csrfTokenManager' => CsrfTokenManagerInterface::class,
+            OAuth2LinkGenerator::class => OAuth2LinkGenerator::class,
+            FileAwareInterface::class => FileAwareInterface::class,
+        ]);
+    }
+
+    protected function getContainer()
+    {
+
+    }
+
     /**
      * Get current request.
      *
@@ -45,7 +78,7 @@ abstract class Controller extends AbstractController
     public function getRequest()
     {
         /** @var RequestStack $requestStack */
-        $requestStack = $this->get(RequestStack::class);
+        $requestStack = $this->get('request_stack');
         return $requestStack->getCurrentRequest();
     }
 
@@ -70,7 +103,7 @@ abstract class Controller extends AbstractController
     /**
      * Alias for `$this->container['em']`.
      *
-     * @return EntityManager
+     * @return ObjectManager
      */
     public function em()
     {
@@ -345,7 +378,7 @@ abstract class Controller extends AbstractController
         }
 
         /** @var TokenInterface|null $token */
-        $token = $this->container['securityTokenStorage']->getToken();
+        $token = $this->getTokenStorage()->getToken();
         if (null === $token) {
             return null;
         }

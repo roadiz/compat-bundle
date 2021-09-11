@@ -21,6 +21,9 @@
         "php": ">=7.4",
         "symfony/framework-bundle": "5.3.*"
     },
+    "replace": {
+        "pimple/pimple": "*"
+    },
     "require-dev": {
         "php-coveralls/php-coveralls": "^2.4",
         "phpstan/phpstan": "^0.12.57",

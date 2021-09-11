@@ -1,17 +1,40 @@
 <?php
 declare(strict_types=1);
 
-class_alias(\RZ\Roadiz\CompatBundle\Controller\Controller::class, '\RZ\Roadiz\CMS\Controllers\Controller');
+class_alias(Symfony\Component\HttpKernel\Kernel::class, '\RZ\Roadiz\Core\Kernel');
 
+class_alias(\Symfony\Component\DependencyInjection\Container::class, '\Pimple\Container');
+class_alias(\RZ\Roadiz\CompatBundle\Controller\AppController::class, '\RZ\Roadiz\CMS\Controllers\AppController');
+class_alias(\RZ\Roadiz\CompatBundle\Controller\BackendController::class, '\RZ\Roadiz\CMS\Controllers\BackendController');
+class_alias(\RZ\Roadiz\CompatBundle\Controller\Controller::class, '\RZ\Roadiz\CMS\Controllers\Controller');
+class_alias(\RZ\Roadiz\CompatBundle\Security\FirewallEntry::class, '\RZ\Roadiz\Utils\Security\FirewallEntry');
+class_alias(\RZ\Roadiz\CompatBundle\EventSubscriber\CachableResponseSubscriber::class, '\RZ\Roadiz\Core\Events\CachableResponseSubscriber');
+
+class_alias(\RZ\Roadiz\CoreBundle\Bag\Settings::class, '\RZ\Roadiz\Core\Bags\Settings');
+class_alias(\RZ\Roadiz\CoreBundle\Controller\LoginRequestTrait::class, '\RZ\Roadiz\CMS\Traits\LoginRequestTrait');
+class_alias(\RZ\Roadiz\CoreBundle\Controller\LoginResetTrait::class, '\RZ\Roadiz\CMS\Traits\LoginResetTrait');
+class_alias(\RZ\Roadiz\CoreBundle\EntityHandler\NodeHandler::class, '\RZ\Roadiz\Core\Handlers\NodeHandler');
+class_alias(\RZ\Roadiz\CoreBundle\EntityHandler\NodesSourcesHandler::class, '\RZ\Roadiz\Core\Handlers\NodesSourcesHandler');
 class_alias(\RZ\Roadiz\CoreBundle\Exception\ForceResponseException::class, '\RZ\Roadiz\Core\Exceptions\ForceResponseException');
 class_alias(\RZ\Roadiz\CoreBundle\Exception\NoTranslationAvailableException::class, '\RZ\Roadiz\Core\Exceptions\NoTranslationAvailableException');
-class_alias(\RZ\Roadiz\CoreBundle\ListManager\EntityListManagerInterface::class, '\RZ\Roadiz\Core\ListManagers\EntityListManagerInterface');
 class_alias(\RZ\Roadiz\CoreBundle\ListManager\EntityListManager::class, '\RZ\Roadiz\Core\ListManagers\EntityListManager');
+class_alias(\RZ\Roadiz\CoreBundle\ListManager\EntityListManagerInterface::class, '\RZ\Roadiz\Core\ListManagers\EntityListManagerInterface');
 class_alias(\RZ\Roadiz\CoreBundle\ListManager\Paginator::class, '\RZ\Roadiz\Core\ListManagers\Paginator');
-class_alias(\RZ\Roadiz\CoreBundle\Repository\TranslationRepository::class, '\RZ\Roadiz\Core\Repositories\TranslationRepository');
-class_alias(\RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface::class, '\RZ\Roadiz\Preview\PreviewResolverInterface');
 class_alias(\RZ\Roadiz\CoreBundle\Mailer\ContactFormManager::class, '\RZ\Roadiz\Utils\ContactFormManager');
 class_alias(\RZ\Roadiz\CoreBundle\Mailer\EmailManager::class, '\RZ\Roadiz\Utils\EmailManager');
+class_alias(\RZ\Roadiz\CoreBundle\Node\NodeDuplicator::class, '\RZ\Roadiz\Utils\Node\NodeDuplicator');
+class_alias(\RZ\Roadiz\CoreBundle\Node\NodeMover::class, '\RZ\Roadiz\Utils\Node\NodeMover');
+class_alias(\RZ\Roadiz\CoreBundle\Node\NodeNameChecker::class, '\RZ\Roadiz\Utils\Node\NodeNameChecker');
+class_alias(\RZ\Roadiz\CoreBundle\Node\NodeTranstyper::class, '\RZ\Roadiz\Utils\Node\NodeTranstyper');
+class_alias(\RZ\Roadiz\CoreBundle\Node\UniqueNodeGenerator::class, '\RZ\Roadiz\Utils\Node\UniqueNodeGenerator');
+class_alias(\RZ\Roadiz\CoreBundle\Node\UniversalDataDuplicator::class, '\RZ\Roadiz\Utils\Node\UniversalDataDuplicator');
+class_alias(\RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface::class, '\RZ\Roadiz\Preview\PreviewResolverInterface');
+class_alias(\RZ\Roadiz\CoreBundle\Repository\NodeRepository::class, '\RZ\Roadiz\Core\Repositories\NodeRepository');
+class_alias(\RZ\Roadiz\CoreBundle\Repository\TranslationRepository::class, '\RZ\Roadiz\Core\Repositories\TranslationRepository');
+class_alias(\RZ\Roadiz\CoreBundle\Routing\NodeRouteHelper::class, '\RZ\Roadiz\Core\Routing\NodeRouteHelper');
+class_alias(\RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver::class, '\RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver');
+class_alias(\RZ\Roadiz\CoreBundle\Theme\ThemeResolverInterface::class, '\RZ\Roadiz\Utils\Theme\ThemeResolverInterface');
+
 /*
  * Entities
  */
