@@ -36,6 +36,10 @@ services:
         alias: RZ\Roadiz\CoreBundle\Bag\Settings
     RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver:
         alias: RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver
+    dispatcher:
+        alias: 'event_dispatcher'
+    nodesSourcesUrlCacheProvider:
+        alias: 'doctrine.orm.cache.provider.cache.doctrine.orm.default.metadata'
     Doctrine\Common\Cache\CacheProvider:
         alias: 'doctrine.orm.cache.provider.cache.doctrine.orm.default.metadata'
     RZ\Roadiz\Preview\PreviewResolverInterface:

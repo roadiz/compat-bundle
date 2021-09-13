@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Controller;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Persistence\ObjectManager;
 use Psr\Log\LoggerInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
@@ -17,6 +18,7 @@ use RZ\Roadiz\CoreBundle\Bag\NodeTypes;
 use RZ\Roadiz\CoreBundle\Bag\Roles;
 use RZ\Roadiz\CoreBundle\Bag\Settings;
 use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
+use RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver;
 use RZ\Roadiz\OpenId\OAuth2LinkGenerator;
 use RZ\Roadiz\Utils\Asset\Packages;
 use RZ\Roadiz\Utils\ContactFormManager;
@@ -70,6 +72,11 @@ abstract class Controller extends AbstractController
             \RZ\Roadiz\Preview\PreviewResolverInterface::class => PreviewResolverInterface::class,
             RequestStack::class => 'request_stack',
             Environment::class => 'twig',
+            'nodesSourcesUrlCacheProvider' => CacheProvider::class,
+            'dispatcher' => 'event_dispatcher',
+            'event_dispatcher' => 'event_dispatcher',
+            NodeChrootResolver::class => NodeChrootResolver::class,
+            \RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver::class => NodeChrootResolver::class,
         ]);
     }
 
