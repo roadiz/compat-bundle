@@ -15,6 +15,9 @@ services:
         exclude:
             - '%kernel.project_dir%/vendor/roadiz/openid/src/OpenIdServiceProvider.php'
 
+    securityTokenStorage:
+        alias: security.token_storage
+
     RZ\Roadiz\Utils\EmailManager:
         alias: RZ\Roadiz\CoreBundle\Mailer\EmailManager
     RZ\Roadiz\Core\Handlers\NodeHandler:
@@ -29,8 +32,14 @@ services:
         alias: Symfony\Component\HttpKernel\KernelInterface
     Pimple\Container:
         alias: Psr\Container\ContainerInterface
+    RZ\Roadiz\Core\Bags\Settings:
+        alias: RZ\Roadiz\CoreBundle\Bag\Settings
+    RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver:
+        alias: RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver
     Doctrine\Common\Cache\CacheProvider:
         alias: 'doctrine.orm.cache.provider.cache.doctrine.orm.default.metadata'
+    RZ\Roadiz\Preview\PreviewResolverInterface:
+        alias: RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface
 
     securityAuthenticationUtils:
         public: true

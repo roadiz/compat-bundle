@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 class_alias(Symfony\Component\HttpKernel\Kernel::class, '\RZ\Roadiz\Core\Kernel');
 
+class_alias(\RZ\Roadiz\RozierBundle\Controller\BackendController::class, '\RZ\Roadiz\CMS\Controllers\BackendController');
+
 class_alias(\Symfony\Component\DependencyInjection\Container::class, '\Pimple\Container');
 class_alias(\RZ\Roadiz\CompatBundle\Controller\AppController::class, '\RZ\Roadiz\CMS\Controllers\AppController');
-class_alias(\RZ\Roadiz\CompatBundle\Controller\BackendController::class, '\RZ\Roadiz\CMS\Controllers\BackendController');
 class_alias(\RZ\Roadiz\CompatBundle\Controller\Controller::class, '\RZ\Roadiz\CMS\Controllers\Controller');
 class_alias(\RZ\Roadiz\CompatBundle\Security\FirewallEntry::class, '\RZ\Roadiz\Utils\Security\FirewallEntry');
 class_alias(\RZ\Roadiz\CompatBundle\EventSubscriber\CachableResponseSubscriber::class, '\RZ\Roadiz\Core\Events\CachableResponseSubscriber');
@@ -34,6 +35,71 @@ class_alias(\RZ\Roadiz\CoreBundle\Repository\TranslationRepository::class, '\RZ\
 class_alias(\RZ\Roadiz\CoreBundle\Routing\NodeRouteHelper::class, '\RZ\Roadiz\Core\Routing\NodeRouteHelper');
 class_alias(\RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver::class, '\RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver');
 class_alias(\RZ\Roadiz\CoreBundle\Theme\ThemeResolverInterface::class, '\RZ\Roadiz\Utils\Theme\ThemeResolverInterface');
+
+
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\HexadecimalColor::class, '\RZ\Roadiz\CMS\Forms\Constraints\HexadecimalColor');
+class_alias(\RZ\Roadiz\CoreBundle\Form\ColorType::class, '\RZ\Roadiz\CMS\Forms\ColorType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\CompareDatetimeType::class, '\RZ\Roadiz\CMS\Forms\CompareDatetimeType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\CompareDateType::class, '\RZ\Roadiz\CMS\Forms\CompareDateType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\CreatePasswordType::class, '\RZ\Roadiz\CMS\Forms\CreatePasswordType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\CssType::class, '\RZ\Roadiz\CMS\Forms\CssType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\CustomFormsType::class, '\RZ\Roadiz\CMS\Forms\CustomFormsType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\DocumentCollectionType::class, '\RZ\Roadiz\CMS\Forms\DocumentCollectionType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\EnumerationType::class, '\RZ\Roadiz\CMS\Forms\EnumerationType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\ExplorerProviderItemType::class, '\RZ\Roadiz\CMS\Forms\ExplorerProviderItemType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\ExtendedBooleanType::class, '\RZ\Roadiz\CMS\Forms\ExtendedBooleanType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\FontVariantsType::class, '\RZ\Roadiz\CMS\Forms\FontVariantsType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\GroupsType::class, '\RZ\Roadiz\CMS\Forms\GroupsType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\HoneypotType::class, '\RZ\Roadiz\CMS\Forms\HoneypotType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\JsonType::class, '\RZ\Roadiz\CMS\Forms\JsonType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\LoginRequestForm::class, '\RZ\Roadiz\CMS\Forms\LoginRequestForm');
+class_alias(\RZ\Roadiz\CoreBundle\Form\LoginResetForm::class, '\RZ\Roadiz\CMS\Forms\LoginResetForm');
+class_alias(\RZ\Roadiz\CoreBundle\Form\MarkdownType::class, '\RZ\Roadiz\CMS\Forms\MarkdownType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\MultipleEnumerationType::class, '\RZ\Roadiz\CMS\Forms\MultipleEnumerationType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\NodeStatesType::class, '\RZ\Roadiz\CMS\Forms\NodeStatesType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\NodesType::class, '\RZ\Roadiz\CMS\Forms\NodesType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\NodeTypesType::class, '\RZ\Roadiz\CMS\Forms\NodeTypesType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\RecaptchaType::class, '\RZ\Roadiz\CMS\Forms\RecaptchaType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\RolesType::class, '\RZ\Roadiz\CMS\Forms\RolesType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\SeparatorType::class, '\RZ\Roadiz\CMS\Forms\SeparatorType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\SettingDocumentType::class, '\RZ\Roadiz\CMS\Forms\SettingDocumentType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\SettingGroupType::class, '\RZ\Roadiz\CMS\Forms\SettingGroupType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\SettingType::class, '\RZ\Roadiz\CMS\Forms\SettingType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\SettingTypeResolver::class, '\RZ\Roadiz\CMS\Forms\SettingTypeResolver');
+class_alias(\RZ\Roadiz\CoreBundle\Form\TagsType::class, '\RZ\Roadiz\CMS\Forms\TagsType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\TagTranslationDocumentType::class, '\RZ\Roadiz\CMS\Forms\TagTranslationDocumentType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\ThemesType::class, '\RZ\Roadiz\CMS\Forms\ThemesType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\TranslationsType::class, '\RZ\Roadiz\CMS\Forms\TranslationsType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\UrlAliasType::class, '\RZ\Roadiz\CMS\Forms\UrlAliasType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\UsersType::class, '\RZ\Roadiz\CMS\Forms\UsersType');
+class_alias(\RZ\Roadiz\CoreBundle\Form\YamlType::class, '\RZ\Roadiz\CMS\Forms\YamlType');
+
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\HexadecimalColor::class, '\RZ\Roadiz\CMS\Forms\Constraints\HexadecimalColor');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\HexadecimalColorValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\HexadecimalColorValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\NodeTypeField::class, '\RZ\Roadiz\CMS\Forms\Constraints\NodeTypeField');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\NodeTypeFieldValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\NodeTypeFieldValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\NonSqlReservedWord::class, '\RZ\Roadiz\CMS\Forms\Constraints\NonSqlReservedWord');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\NonSqlReservedWordValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\NonSqlReservedWordValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\Recaptcha::class, '\RZ\Roadiz\CMS\Forms\Constraints\Recaptcha');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\RecaptchaValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\RecaptchaValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\SimpleLatinString::class, '\RZ\Roadiz\CMS\Forms\Constraints\SimpleLatinString');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\SimpleLatinStringValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\SimpleLatinStringValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\UniqueEntity::class, '\RZ\Roadiz\CMS\Forms\Constraints\UniqueEntity');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\UniqueEntityValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\UniqueEntityValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\UniqueFilename::class, '\RZ\Roadiz\CMS\Forms\Constraints\UniqueFilename');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\UniqueFilenameValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\UniqueFilenameValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\UniqueNodeName::class, '\RZ\Roadiz\CMS\Forms\Constraints\UniqueNodeName');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\UniqueNodeNameValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\UniqueNodeNameValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\UniqueTagName::class, '\RZ\Roadiz\CMS\Forms\Constraints\UniqueTagName');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\UniqueTagNameValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\UniqueTagNameValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\ValidAccountConfirmationToken::class, '\RZ\Roadiz\CMS\Forms\Constraints\ValidAccountConfirmationToken');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\ValidAccountConfirmationTokenValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\ValidAccountConfirmationTokenValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\ValidAccountEmail::class, '\RZ\Roadiz\CMS\Forms\Constraints\ValidAccountEmail');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\ValidAccountEmailValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\ValidAccountEmailValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\ValidFacebookName::class, '\RZ\Roadiz\CMS\Forms\Constraints\ValidFacebookName');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\ValidFacebookNameValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\ValidFacebookNameValidator');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\ValidYaml::class, '\RZ\Roadiz\CMS\Forms\Constraints\ValidYaml');
+class_alias(\RZ\Roadiz\CoreBundle\Form\Constraint\ValidYamlValidator::class, '\RZ\Roadiz\CMS\Forms\Constraints\ValidYamlValidator');
 
 /*
  * Entities

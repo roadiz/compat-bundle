@@ -16,11 +16,12 @@ use RZ\Roadiz\Core\Repositories\TranslationRepository;
 use RZ\Roadiz\CoreBundle\Bag\NodeTypes;
 use RZ\Roadiz\CoreBundle\Bag\Roles;
 use RZ\Roadiz\CoreBundle\Bag\Settings;
+use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
 use RZ\Roadiz\OpenId\OAuth2LinkGenerator;
-use RZ\Roadiz\Preview\PreviewResolverInterface;
 use RZ\Roadiz\Utils\Asset\Packages;
 use RZ\Roadiz\Utils\ContactFormManager;
 use RZ\Roadiz\Utils\EmailManager;
+use RZ\Roadiz\Utils\MediaFinders\RandomImageFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -51,6 +52,8 @@ abstract class Controller extends AbstractController
     {
         return array_merge(parent::getSubscribedServices(), [
             'securityAuthenticationUtils' => AuthenticationUtils::class,
+            'securityTokenStorage' => TokenStorageInterface::class,
+            TokenStorageInterface::class => TokenStorageInterface::class,
             'urlGenerator' => UrlGeneratorInterface::class,
             EmailManager::class => EmailManager::class,
             'logger' => LoggerInterface::class,
@@ -62,12 +65,12 @@ abstract class Controller extends AbstractController
             'csrfTokenManager' => CsrfTokenManagerInterface::class,
             OAuth2LinkGenerator::class => OAuth2LinkGenerator::class,
             FileAwareInterface::class => FileAwareInterface::class,
+            RandomImageFinder::class => RandomImageFinder::class,
+            PreviewResolverInterface::class => PreviewResolverInterface::class,
+            \RZ\Roadiz\Preview\PreviewResolverInterface::class => PreviewResolverInterface::class,
+            RequestStack::class => 'request_stack',
+            Environment::class => 'twig',
         ]);
-    }
-
-    protected function getContainer()
-    {
-
     }
 
     /**
