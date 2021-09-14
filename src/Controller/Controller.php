@@ -19,11 +19,13 @@ use RZ\Roadiz\CoreBundle\Bag\Roles;
 use RZ\Roadiz\CoreBundle\Bag\Settings;
 use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
 use RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver;
+use RZ\Roadiz\Document\Renderer\RendererInterface;
 use RZ\Roadiz\OpenId\OAuth2LinkGenerator;
 use RZ\Roadiz\Utils\Asset\Packages;
 use RZ\Roadiz\Utils\ContactFormManager;
 use RZ\Roadiz\Utils\EmailManager;
 use RZ\Roadiz\Utils\MediaFinders\RandomImageFinder;
+use RZ\Roadiz\Utils\UrlGenerators\DocumentUrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -43,7 +45,6 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
@@ -61,6 +62,7 @@ abstract class Controller extends AbstractController
             'logger' => LoggerInterface::class,
             'kernel' => KernelInterface::class,
             'settingsBag' => Settings::class,
+            Settings::class => Settings::class,
             'nodeTypesBag' => NodeTypes::class,
             'rolesBag' => Roles::class,
             'assetPackages' => Packages::class,
@@ -77,6 +79,9 @@ abstract class Controller extends AbstractController
             'event_dispatcher' => 'event_dispatcher',
             NodeChrootResolver::class => NodeChrootResolver::class,
             \RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver::class => NodeChrootResolver::class,
+            TranslatorInterface::class => TranslatorInterface::class,
+            RendererInterface::class => RendererInterface::class,
+            DocumentUrlGeneratorInterface::class => DocumentUrlGeneratorInterface::class,
         ]);
     }
 
@@ -121,9 +126,9 @@ abstract class Controller extends AbstractController
     }
 
     /**
-     * @return Translator
+     * @return TranslatorInterface
      */
-    public function getTranslator(): Translator
+    public function getTranslator(): TranslatorInterface
     {
         return $this->get(TranslatorInterface::class);
     }
@@ -137,10 +142,24 @@ abstract class Controller extends AbstractController
     }
 
     /**
+     * @param object $event
+     * @return object The passed $event MUST be returned
+     */
+    protected function dispatchEvent($event)
+    {
+        return $this->get('event_dispatcher')->dispatch($event);
+    }
+
+    public function getSettingsBag(): Settings
+    {
+        return $this->get(Settings::class);
+    }
+
+    /**
      * Wrap `$this->container['urlGenerator']->generate`
      *
      * @param string|NodesSources $route
-     * @param mixed  $parameters
+     * @param array $parameters
      * @param int $referenceType
      * @return string
      */
@@ -325,11 +344,8 @@ abstract class Controller extends AbstractController
      */
     protected function createNamedFormBuilder(string $name = 'form', $data = null, array $options = [])
     {
-        /** @var FormFactoryInterface $formFactory */
-        $formFactory = $this->get(FormFactoryInterface::class);
-        return $formFactory->createNamedBuilder($name, FormType::class, $data, $options);
+        return $this->get('form.factory')->createNamedBuilder($name, FormType::class, $data, $options);
     }
-
 
     /**
      * Creates and returns an EntityListManager instance.

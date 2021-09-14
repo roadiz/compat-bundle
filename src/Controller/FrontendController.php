@@ -82,53 +82,6 @@ abstract class FrontendController extends AppController
             $container['versionStrategy'],
             new RequestStackContext($container['requestStack'])
         ));
-
-        /**
-         * You can override default frontend firewall
-         * by overriding addDefaultFirewallEntry method
-         *
-         * @see FrontendController::addDefaultFirewallEntry
-         */
-        static::addDefaultFirewallEntry($container);
-    }
-
-    /**
-     * Declare a default firewall for any routes and adds
-     * an Anonymous token and context listener to fetch current
-     * user information in front-end.
-     *
-     * Override this method to create a custom frontend security scheme
-     * with FirewallEntry.
-     *
-     * Always declare before ^/ any firewall base pattern that is INSIDE
-     * site base_path.
-     *
-     * @param Container $container
-     * @see FirewallEntry
-     */
-    public static function addDefaultFirewallEntry(Container $container)
-    {
-        $firewallBasePattern = '^/';
-        $firewallBasePath = '/';
-
-        $firewallEntry = new FirewallEntry(
-            $container,
-            $firewallBasePattern,
-            $firewallBasePath,
-            null,
-            null,
-            null,
-            'IS_AUTHENTICATED_ANONYMOUSLY'
-        );
-        $firewallEntry
-            ->withSwitchUserListener()
-            ->withAnonymousAuthenticationListener();
-
-        $container['firewallMap']->add(
-            $firewallEntry->getRequestMatcher(),
-            $firewallEntry->getListeners(),
-            $firewallEntry->getExceptionListener()
-        );
     }
 
     /**

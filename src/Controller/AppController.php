@@ -12,15 +12,14 @@ use ReflectionClass;
 use ReflectionException;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
 use RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver;
+use RZ\Roadiz\Core\Events\CachableResponseSubscriber;
+use RZ\Roadiz\Core\Handlers\NodeHandler;
+use RZ\Roadiz\Core\Kernel;
 use RZ\Roadiz\Core\Models\FileAwareInterface;
-use RZ\Roadiz\CoreBundle\Bag\Settings;
 use RZ\Roadiz\CoreBundle\Entity\Node;
 use RZ\Roadiz\CoreBundle\Entity\NodesSources;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
 use RZ\Roadiz\CoreBundle\Entity\User;
-use RZ\Roadiz\Core\Events\CachableResponseSubscriber;
-use RZ\Roadiz\Core\Handlers\NodeHandler;
-use RZ\Roadiz\Core\Kernel;
 use RZ\Roadiz\Preview\PreviewResolverInterface;
 use RZ\Roadiz\Utils\Asset\Packages;
 use RZ\Roadiz\Utils\Theme\ThemeResolverInterface;
@@ -37,7 +36,6 @@ use Symfony\Component\Routing\Loader\YamlFileLoader;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\String\UnicodeString;
-use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\ConstraintViolation;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -152,12 +150,6 @@ abstract class AppController extends Controller
     public static function isBackendTheme(): bool
     {
         return static::$backendTheme;
-    }
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-        $this->prepareBaseAssignation();
     }
 
     /**
@@ -362,10 +354,10 @@ abstract class AppController extends Controller
             'head' => [
                 'ajax' => $this->getRequest()->isXmlHttpRequest(),
                 'devMode' => $kernel->isDebug(),
-                'maintenanceMode' => (boolean) $this->get('settingsBag')->get('maintenance_mode'),
-                'useCdn' => (boolean) $this->get('settingsBag')->get('use_cdn'),
-                'universalAnalyticsId' => $this->get('settingsBag')->get('universal_analytics_id'),
-                'googleTagManagerId' => $this->get('settingsBag')->get('google_tag_manager_id'),
+                'maintenanceMode' => (boolean) $this->getSettingsBag()->get('maintenance_mode'),
+                'useCdn' => (boolean) $this->getSettingsBag()->get('use_cdn'),
+                'universalAnalyticsId' => $this->getSettingsBag()->get('universal_analytics_id'),
+                'googleTagManagerId' => $this->getSettingsBag()->get('google_tag_manager_id'),
                 'baseUrl' => $this->getRequest()->getSchemeAndHttpHost() . $this->getRequest()->getBasePath(),
                 'filesUrl' => $this->getRequest()->getBaseUrl() . $this->get(FileAwareInterface::class)->getPublicFilesBasePath(),
                 'resourcesUrl' => $this->getStaticResourcesUrl(),
@@ -616,29 +608,37 @@ abstract class AppController extends Controller
         $kernel = $this->get('kernel');
         /** @var RequestStack $requestStack */
         $requestStack = $this->get(RequestStack::class);
-        /** @var Settings $settings */
-        $settings = $this->get('settingsBag');
+        $settings = $this->getSettingsBag();
         /** @var PreviewResolverInterface $previewResolver */
         $previewResolver = $this->get(PreviewResolverInterface::class);
 
-        if (!$previewResolver->isPreview() &&
+        if (
+            !$previewResolver->isPreview() &&
             !$kernel->isDebug() &&
-            $requestStack->getMasterRequest() === $request &&
+            $requestStack->getMainRequest() === $request &&
             $request->isMethodCacheable() &&
             $minutes > 0 &&
-            !$settings->get('maintenance_mode', false)) {
-            /*
-             * TODO: Need refactoring
-             * This method is not futureproof and assume that each request
-             * is served during one Roadiz lifecycle.
-             */
-            /** @var EventDispatcherInterface $dispatcher */
-            $dispatcher = $this->get('dispatcher');
-            $dispatcher->addSubscriber(new CachableResponseSubscriber(
-                $minutes,
-                true,
-                $allowClientCache
-            ));
+            !$settings->get('maintenance_mode', false)
+        ) {
+            header_remove('Cache-Control');
+            header_remove('Vary');
+            $response->headers->remove('cache-control');
+            $response->headers->remove('vary');
+            $response->setPublic();
+            $response->setSharedMaxAge(60 * $minutes);
+            $response->headers->addCacheControlDirective('must-revalidate', true);
+
+            if ($allowClientCache) {
+                $response->setMaxAge(60 * $minutes);
+            }
+
+            $response->setVary('Accept-Encoding, X-Partial, x-requested-with');
+
+            if ($request->isXmlHttpRequest()) {
+                $response->headers->add([
+                    'X-Partial' => true
+                ]);
+            }
         }
 
         return $response;
@@ -672,9 +672,7 @@ abstract class AppController extends Controller
     {
         $this->container['stopwatch']->start('getHome');
         if (null === $this->homeNode) {
-            /** @var NodeRepository $nodeRepository */
             $nodeRepository = $this->get('em')->getRepository(Node::class);
-
             if ($translation !== null) {
                 $this->homeNode = $nodeRepository->findHomeWithTranslation($translation);
             } else {
@@ -694,18 +692,13 @@ abstract class AppController extends Controller
      */
     protected function getErrorsAsArray(FormInterface $form): array
     {
-        /** @var Translator $translator */
-        $translator = $this->get('translator');
+        $translator = $this->getTranslator();
         $errors = [];
         /** @var FormError $error */
         foreach ($form->getErrors() as $error) {
             $errorFieldName = $error->getOrigin()->getName();
             if (count($error->getMessageParameters()) > 0) {
-                if (null !== $error->getMessagePluralization()) {
-                    $errors[$errorFieldName] = $translator->transChoice($error->getMessageTemplate(), $error->getMessagePluralization(), $error->getMessageParameters());
-                } else {
-                    $errors[$errorFieldName] = $translator->trans($error->getMessageTemplate(), $error->getMessageParameters());
-                }
+                $errors[$errorFieldName] = $translator->trans($error->getMessageTemplate(), $error->getMessageParameters());
             } else {
                 $errors[$errorFieldName] = $error->getMessage();
             }
