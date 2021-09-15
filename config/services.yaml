@@ -5,7 +5,6 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
-            $settingsBag: '@RZ\Roadiz\CoreBundle\Bag\Settings'
             $discoveryUri: '%env(string:OPEN_ID_DISCOVERY_URL)%'
 
     RZ\Roadiz\CompatBundle\:
@@ -26,99 +25,43 @@ services:
 
     securityTokenStorage:
         alias: security.token_storage
-
-    RZ\Roadiz\Utils\Node\NodeNamePolicyInterface:
-        alias: RZ\Roadiz\CoreBundle\Node\NodeNamePolicyInterface
-    RZ\Roadiz\Utils\Node\UniqueNodeGenerator:
-        alias: RZ\Roadiz\CoreBundle\Node\UniqueNodeGenerator
-    RZ\Roadiz\Utils\Node\NodeDuplicator:
-        alias: RZ\Roadiz\CoreBundle\Node\NodeDuplicator
-    RZ\Roadiz\Utils\Node\NodeMover:
-        alias: RZ\Roadiz\CoreBundle\Node\NodeMover
-    RZ\Roadiz\Utils\Node\NodeNameChecker:
-        alias: RZ\Roadiz\CoreBundle\Node\NodeNameChecker
-    RZ\Roadiz\Utils\Node\NodeTranstyper:
-        alias: RZ\Roadiz\CoreBundle\Node\NodeTranstyper
-    RZ\Roadiz\Utils\Node\UniversalDataDuplicator:
-        alias: RZ\Roadiz\CoreBundle\Node\UniversalDataDuplicator
-
-    RZ\Roadiz\Utils\Doctrine\SchemaUpdater:
-        alias: RZ\Roadiz\CoreBundle\Doctrine\SchemaUpdater
-
-    RZ\Roadiz\CMS\Utils\NodeTypeApi:
-        alias: RZ\Roadiz\CoreBundle\EntityApi\NodeTypeApi
-    RZ\Roadiz\CMS\Utils\TagApi:
-        alias: RZ\Roadiz\CoreBundle\EntityApi\TagApi
-    RZ\Roadiz\CMS\Utils\NodeApi:
-        alias: RZ\Roadiz\CoreBundle\EntityApi\NodeApi
-    RZ\Roadiz\CMS\Utils\NodeSourceApi:
-        alias: RZ\Roadiz\CoreBundle\EntityApi\NodeSourceApi
-    RZ\Roadiz\Core\Bags\NodeTypes:
-        alias: RZ\Roadiz\CoreBundle\Bag\NodeTypes
-    RZ\Roadiz\Utils\EmailManager:
-        alias: RZ\Roadiz\CoreBundle\Mailer\EmailManager
-    RZ\Roadiz\Core\Handlers\NodeHandler:
-        alias: RZ\Roadiz\CoreBundle\EntityHandler\NodeHandler
-    RZ\Roadiz\Core\Handlers\NodesSourcesHandler:
-        alias: RZ\Roadiz\CoreBundle\EntityHandler\NodesSourcesHandler
-    RZ\Roadiz\Core\Kernel:
-        alias: Symfony\Component\HttpKernel\KernelInterface
+        public: true
     Pimple\Container:
         alias: Psr\Container\ContainerInterface
-    RZ\Roadiz\Core\Bags\Settings:
-        alias: RZ\Roadiz\CoreBundle\Bag\Settings
-    RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver:
-        alias: RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver
+        public: true
     factory.handler:
         alias: RZ\Roadiz\CoreBundle\EntityHandler\HandlerFactory
+        public: true
+    settingsBag:
+        alias: RZ\Roadiz\CoreBundle\Bag\Settings
+        public: true
+    nodeTypesBag:
+        alias: RZ\Roadiz\CoreBundle\Bag\NodeTypes
+        public: true
+    rolesBag:
+        alias: RZ\Roadiz\CoreBundle\Bag\Roles
+        public: true
     formFactory:
         alias: 'form.factory'
+        public: true
     dispatcher:
         alias: 'event_dispatcher'
-    nodesSourcesUrlCacheProvider:
-        alias: 'doctrine.orm.cache.provider.cache.doctrine.orm.default.metadata'
+        public: true
+    Symfony\Component\HttpFoundation\ParameterBag:
+        alias: RZ\Roadiz\CoreBundle\Bag\Settings
     Doctrine\Common\Cache\CacheProvider:
         alias: 'doctrine.orm.cache.provider.cache.doctrine.orm.default.metadata'
-    RZ\Roadiz\Preview\PreviewResolverInterface:
-        alias: RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface
-
-    securityAuthenticationUtils:
+    nodesSourcesUrlCacheProvider:
+        alias: 'doctrine.orm.cache.provider.cache.doctrine.orm.default.metadata'
         public: true
+    securityAuthenticationUtils:
         alias: Symfony\Component\Security\Http\Authentication\AuthenticationUtils
-
+        public: true
+    entityManager:
+        public: true
+        alias: 'doctrine.orm.default_entity_manager'
     em:
         public: true
-        alias: 'doctrine'
+        alias: 'doctrine.orm.default_entity_manager'
 
-    RZ\Roadiz\Utils\Document\DocumentFactory:
-        alias: RZ\Roadiz\CoreBundle\Document\DocumentFactory
-
-    RZ\Roadiz\Attribute\Importer\AttributeImporter:
-        alias: RZ\Roadiz\CoreBundle\Importer\AttributeImporter
-    RZ\Roadiz\CMS\Importers\ChainImporter:
-        alias: RZ\Roadiz\CoreBundle\Importer\ChainImporter
-    RZ\Roadiz\CMS\Importers\GroupsImporter:
-        alias: RZ\Roadiz\CoreBundle\Importer\GroupsImporter
-    RZ\Roadiz\CMS\Importers\NodeTypesImporter:
-        alias: RZ\Roadiz\CoreBundle\Importer\NodeTypesImporter
-    RZ\Roadiz\CMS\Importers\RolesImporter:
-        alias: RZ\Roadiz\CoreBundle\Importer\RolesImporter
-    RZ\Roadiz\CMS\Importers\SettingsImporter:
-        alias: RZ\Roadiz\CoreBundle\Importer\SettingsImporter
-    RZ\Roadiz\CMS\Importers\TagsImporter:
-        alias: RZ\Roadiz\CoreBundle\Importer\TagsImporter
-
-    RZ\Roadiz\Core\Serializers\NodeSourceXlsxSerializer:
-        alias: RZ\Roadiz\CoreBundle\Xlsx\NodeSourceXlsxSerializer
-
-    RZ\Roadiz\Utils\CustomForm\CustomFormAnswerSerializer:
-        alias: RZ\Roadiz\CoreBundle\CustomForm\CustomFormAnswerSerializer
-    RZ\Roadiz\Utils\CustomForm\CustomFormHelper:
-        alias: RZ\Roadiz\CoreBundle\CustomForm\CustomFormHelper
-
-    RZ\Roadiz\Utils\Tag\TagFactory:
-        alias: RZ\Roadiz\CoreBundle\Tag\TagFactory
-
-    RZ\Roadiz\Webhook\WebhookDispatcher:
-        alias: RZ\Roadiz\CoreBundle\Webhook\WebhookDispatcher
 
