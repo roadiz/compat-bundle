@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\DependencyInjection;
 
+use RZ\Roadiz\CompatBundle\Aliases;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -21,12 +22,5 @@ class RoadizCompatExtension extends Extension
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-
-        $aliases = require __DIR__ . '/../aliases.php';
-        foreach ($aliases as $className => $alias) {
-            if (!(new UnicodeString($className))->containsAny(['\\Entity\\', '\\DependencyInjection'])) {
-                $container->setAlias($alias, $className);
-            }
-        }
     }
 }

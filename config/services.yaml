@@ -23,6 +23,38 @@ services:
         exclude:
             - '%kernel.project_dir%/vendor/roadiz/openid/src/OpenIdServiceProvider.php'
 
+    # Explicit declaration
+    RZ\Roadiz\CompatBundle\Controller\AppController:
+    RZ\Roadiz\CompatBundle\Controller\Controller:
+    RZ\Roadiz\CompatBundle\Controller\FrontendController:
+
+    # These types need to be aliases early for FormPass
+    # because their need constructor injection
+    RZ\Roadiz\CMS\Forms\DocumentCollectionType:
+        alias: RZ\Roadiz\CoreBundle\Form\DocumentCollectionType
+    RZ\Roadiz\CMS\Forms\GroupsType:
+        alias: RZ\Roadiz\CoreBundle\Form\GroupsType
+    RZ\Roadiz\CMS\Forms\NodeTypesType:
+        alias: RZ\Roadiz\CoreBundle\Form\NodeTypesType
+    RZ\Roadiz\CMS\Forms\NodesType:
+        alias: RZ\Roadiz\CoreBundle\Form\NodesType
+    RZ\Roadiz\CMS\Forms\RolesType:
+        alias: RZ\Roadiz\CoreBundle\Form\RolesType
+    RZ\Roadiz\CMS\Forms\SettingDocumentType:
+        alias: RZ\Roadiz\CoreBundle\Form\SettingDocumentType
+    RZ\Roadiz\CMS\Forms\SettingGroupType:
+        alias: RZ\Roadiz\CoreBundle\Form\SettingGroupType
+    RZ\Roadiz\CMS\Forms\SettingType:
+        alias: RZ\Roadiz\CoreBundle\Form\SettingType
+    RZ\Roadiz\CMS\Forms\TagTranslationDocumentType:
+        alias: RZ\Roadiz\CoreBundle\Form\TagTranslationDocumentType
+    RZ\Roadiz\CMS\Forms\TranslationsType:
+        alias: RZ\Roadiz\CoreBundle\Form\TranslationsType
+    RZ\Roadiz\CMS\Forms\UrlAliasType:
+        alias: RZ\Roadiz\CoreBundle\Form\UrlAliasType
+    RZ\Roadiz\CMS\Forms\UsersType:
+        alias: RZ\Roadiz\CoreBundle\Form\UsersType
+
     securityTokenStorage:
         alias: security.token_storage
         public: true

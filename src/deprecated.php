@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-$aliases = require __DIR__ . '/aliases.php';
+use RZ\Roadiz\CompatBundle\Aliases;
 
-foreach ($aliases as $className => $alias) {
+foreach (Aliases::getAliases() as $className => $alias) {
     class_alias($className, $alias);
 }

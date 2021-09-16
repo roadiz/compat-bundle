@@ -3,17 +3,19 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Controller;
 
-use Pimple\Container;
 use Psr\Log\LoggerInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
-use RZ\Roadiz\Core\Entities\Node;
-use RZ\Roadiz\Core\Entities\NodesSources;
-use RZ\Roadiz\Core\Handlers\NodesSourcesHandler;
-use RZ\Roadiz\Core\Routing\NodeRouteHelper;
-use RZ\Roadiz\Preview\PreviewResolverInterface;
-use RZ\Roadiz\Utils\Security\FirewallEntry;
+use RZ\Roadiz\Core\Handlers\HandlerFactoryInterface;
+use RZ\Roadiz\CoreBundle\Entity\Node;
+use RZ\Roadiz\CoreBundle\Entity\NodesSources;
+use RZ\Roadiz\CoreBundle\EntityHandler\NodesSourcesHandler;
+use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
+use RZ\Roadiz\CoreBundle\Routing\NodeRouteHelper;
+use RZ\Roadiz\Utils\Asset\Packages;
 use Symfony\Component\Asset\Context\RequestStackContext;
 use Symfony\Component\Asset\PathPackage;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -62,7 +64,11 @@ abstract class FrontendController extends AppController
     protected ?Node $node = null;
     protected ?NodesSources $nodeSource = null;
     protected ?TranslationInterface $translation = null;
-    protected ?Container $themeContainer = null;
+    /**
+     * @var ContainerInterface|null
+     * @deprecated Use a service locator object
+     */
+    protected ?ContainerInterface $themeContainer = null;
 
     /**
      * Append objects to global container.
@@ -70,14 +76,15 @@ abstract class FrontendController extends AppController
      * Add a request matcher on frontend to make securityTokenStorage
      * available even when no user has logged in.
      *
-     * @param Container $container
+     * @param ContainerInterface $container
+     * @deprecated
      */
-    public static function setupDependencyInjection(Container $container)
+    public static function setupDependencyInjection(ContainerInterface $container)
     {
         parent::setupDependencyInjection($container);
         static::addThemeTemplatesPath($container);
 
-        $container['assetPackages']->addPackage(static::getThemeDir(), new PathPackage(
+        $container->get(Packages::class)->addPackage(static::getThemeDir(), new PathPackage(
             'themes/' . static::getThemeDir() . '/static',
             $container['versionStrategy'],
             new RequestStackContext($container['requestStack'])
@@ -137,7 +144,6 @@ abstract class FrontendController extends AppController
      * @param Request $request
      * @param Node|null $node
      * @param TranslationInterface|null $translation
-     *
      * @return Response
      */
     protected function handle(
@@ -162,34 +168,13 @@ abstract class FrontendController extends AppController
                 $msg = "No front-end controller found for '" .
                 $node->getNodeName() .
                 "' node. You need to create a " . $controllerPath . ".";
-
                 throw $this->createNotFoundException($msg);
             }
 
-            $ctrl = new $controllerPath();
-
-            /*
-             * Inject current Kernel to the matched Controller
-             */
-            if ($ctrl instanceof FrontendController) {
-                $ctrl->setContainer($this->container);
-
-                /*
-                 * As we are creating an other controller
-                 * we don't need to init again, so we pass the
-                 * environment to the next level.
-                 */
-                $ctrl->__initFromOtherController(
-                    $this->assignation,
-                    $this->themeContainer
-                );
-            }
-            $this->get(Stopwatch::class)->stop('handleNodeController');
-            return $ctrl->$method(
-                $request,
-                $node,
-                $translation
-            );
+            return $this->forward($controllerPath . '::' . $method, [
+                'node' => $node,
+                'translation' => $translation
+            ]);
         }
 
         throw $this->createNotFoundException("No front-end controller found");
@@ -200,11 +185,12 @@ abstract class FrontendController extends AppController
      * in order to avoid initializing same component again.
      *
      * @param array $baseAssignation
-     * @param Container|null $themeContainer
+     * @param ContainerInterface|null $themeContainer
+     * @deprecated
      */
     public function __initFromOtherController(
         array &$baseAssignation = [],
-        Container $themeContainer = null
+        ContainerInterface $themeContainer = null
     ) {
         $this->assignation = $baseAssignation;
         $this->themeContainer = $themeContainer;
@@ -317,13 +303,13 @@ abstract class FrontendController extends AppController
     {
         if (null !== $this->nodeSource) {
             /** @var NodesSourcesHandler $nodesSourcesHandler */
-            $nodesSourcesHandler = $this->get('factory.handler')->getHandler($this->nodeSource);
+            $nodesSourcesHandler = $this->get(HandlerFactoryInterface::class)->getHandler($this->nodeSource);
             return $nodesSourcesHandler->getSEO();
         }
 
         if (null !== $fallbackNodeSource) {
             /** @var NodesSourcesHandler $nodesSourcesHandler */
-            $nodesSourcesHandler = $this->get('factory.handler')->getHandler($fallbackNodeSource);
+            $nodesSourcesHandler = $this->get(HandlerFactoryInterface::class)->getHandler($fallbackNodeSource);
             return $nodesSourcesHandler->getSEO();
         }
 

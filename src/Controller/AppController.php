@@ -5,26 +5,23 @@ namespace RZ\Roadiz\CompatBundle\Controller;
 
 use Exception;
 use InvalidArgumentException;
-use Pimple\Container;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
-use RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver;
-use RZ\Roadiz\Core\Events\CachableResponseSubscriber;
-use RZ\Roadiz\Core\Handlers\NodeHandler;
-use RZ\Roadiz\Core\Kernel;
+use RZ\Roadiz\Core\Handlers\HandlerFactoryInterface;
 use RZ\Roadiz\Core\Models\FileAwareInterface;
 use RZ\Roadiz\CoreBundle\Entity\Node;
 use RZ\Roadiz\CoreBundle\Entity\NodesSources;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
 use RZ\Roadiz\CoreBundle\Entity\User;
-use RZ\Roadiz\Preview\PreviewResolverInterface;
+use RZ\Roadiz\CoreBundle\EntityHandler\NodeHandler;
+use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
+use RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver;
+use RZ\Roadiz\CoreBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\Utils\Asset\Packages;
-use RZ\Roadiz\Utils\Theme\ThemeResolverInterface;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,6 +29,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Loader\YamlFileLoader;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -270,20 +268,24 @@ abstract class AppController extends Controller
     /**
      * Append objects to the global dependency injection container.
      *
-     * @param Container $container
+     * @param ContainerInterface $container
+     *
+     * @deprecated
      */
-    public static function setupDependencyInjection(Container $container)
+    public static function setupDependencyInjection(ContainerInterface $container)
     {
         // Do nothing
     }
 
     /**
-     * @param Container $container
+     * @param ContainerInterface $container
      *
      * @throws ReflectionException
      * @throws LoaderError
+     *
+     * @deprecated
      */
-    public static function addThemeTemplatesPath(Container $container)
+    public static function addThemeTemplatesPath(ContainerInterface $container)
     {
         /** @var FilesystemLoader $loader */
         $loader = $container->get('twig.loader.native_filesystem');
@@ -348,7 +350,6 @@ abstract class AppController extends Controller
      */
     public function prepareBaseAssignation()
     {
-        /** @var Kernel $kernel */
         $kernel = $this->get('kernel');
         $this->assignation = [
             'head' => [
@@ -423,8 +424,7 @@ abstract class AppController extends Controller
     public function getTheme(): ?Theme
     {
         $this->container['stopwatch']->start('getTheme');
-        /** @var ThemeResolverInterface $themeResolver */
-        $themeResolver = $this->get('themeResolver');
+        $themeResolver = $this->get(ThemeResolverInterface::class);
         if (null === $this->theme) {
             $className = new UnicodeString(static::getCalledClass());
             while (!$className->endsWith('App')) {
@@ -541,7 +541,7 @@ abstract class AppController extends Controller
             $this->get('em')->refresh($node);
 
             /** @var NodeHandler $nodeHandler */
-            $nodeHandler = $this->get('factory.handler')->getHandler($node);
+            $nodeHandler = $this->get(HandlerFactoryInterface::class)->getHandler($node);
             $parents = $nodeHandler->getParents();
 
             if ($includeChroot) {
