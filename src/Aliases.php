@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle;
 
+
 final class Aliases {
     /**
      * @return array<class-string, class-string>
@@ -15,8 +16,6 @@ final class Aliases {
             \RZ\Roadiz\CoreBundle\Bag\NodeTypes::class => \RZ\Roadiz\Core\Bags\NodeTypes::class,
             \RZ\Roadiz\CoreBundle\Bag\Roles::class => \RZ\Roadiz\Core\Bags\Roles::class,
             \RZ\Roadiz\CoreBundle\Bag\Settings::class => \RZ\Roadiz\Core\Bags\Settings::class,
-            \RZ\Roadiz\CoreBundle\Traits\LoginRequestTrait::class => \RZ\Roadiz\CMS\Traits\LoginRequestTrait::class,
-            \RZ\Roadiz\CoreBundle\Traits\LoginResetTrait::class => \RZ\Roadiz\CMS\Traits\LoginResetTrait::class,
             \RZ\Roadiz\CoreBundle\CustomForm\CustomFormAnswerSerializer::class => \RZ\Roadiz\Utils\CustomForm\CustomFormAnswerSerializer::class,
             \RZ\Roadiz\CoreBundle\CustomForm\CustomFormHelper::class => \RZ\Roadiz\Utils\CustomForm\CustomFormHelper::class,
             \RZ\Roadiz\CoreBundle\DependencyInjection\Configuration::class => \RZ\Roadiz\Config\Configuration::class,
@@ -140,7 +139,6 @@ final class Aliases {
             \RZ\Roadiz\CoreBundle\Form\AttributeValueTranslationType::class => \RZ\Roadiz\Attribute\Form\AttributeValueTranslationType::class,
             \RZ\Roadiz\CoreBundle\Form\AttributeValueType::class => \RZ\Roadiz\Attribute\Form\AttributeValueType::class,
             \RZ\Roadiz\CoreBundle\Form\ColorType::class => \RZ\Roadiz\CMS\Forms\ColorType::class,
-            \RZ\Roadiz\CoreBundle\Form\WebhookType::class => \RZ\Roadiz\Webhook\Form\WebhookType::class,
             \RZ\Roadiz\CoreBundle\Form\CompareDateType::class => \RZ\Roadiz\CMS\Forms\CompareDateType::class,
             \RZ\Roadiz\CoreBundle\Form\CompareDatetimeType::class => \RZ\Roadiz\CMS\Forms\CompareDatetimeType::class,
             \RZ\Roadiz\CoreBundle\Form\Constraint\HexadecimalColor::class => \RZ\Roadiz\CMS\Forms\Constraints\HexadecimalColor::class,
@@ -211,6 +209,7 @@ final class Aliases {
             \RZ\Roadiz\CoreBundle\Form\TranslationsType::class => \RZ\Roadiz\CMS\Forms\TranslationsType::class,
             \RZ\Roadiz\CoreBundle\Form\UrlAliasType::class => \RZ\Roadiz\CMS\Forms\UrlAliasType::class,
             \RZ\Roadiz\CoreBundle\Form\UsersType::class => \RZ\Roadiz\CMS\Forms\UsersType::class,
+            \RZ\Roadiz\CoreBundle\Form\WebhookType::class => \RZ\Roadiz\Webhook\Form\WebhookType::class,
             \RZ\Roadiz\CoreBundle\Form\YamlType::class => \RZ\Roadiz\CMS\Forms\YamlType::class,
             \RZ\Roadiz\CoreBundle\Importer\AttributeImporter::class => \RZ\Roadiz\Attribute\Importer\AttributeImporter::class,
             \RZ\Roadiz\CoreBundle\Importer\ChainImporter::class => \RZ\Roadiz\CMS\Importers\ChainImporter::class,
@@ -221,10 +220,15 @@ final class Aliases {
             \RZ\Roadiz\CoreBundle\Importer\TagsImporter::class => \RZ\Roadiz\CMS\Importers\TagsImporter::class,
             \RZ\Roadiz\CoreBundle\ListManager\EntityListManager::class => \RZ\Roadiz\Core\ListManagers\EntityListManager::class,
             \RZ\Roadiz\CoreBundle\ListManager\EntityListManagerInterface::class => \RZ\Roadiz\Core\ListManagers\EntityListManagerInterface::class,
+            \RZ\Roadiz\CoreBundle\ListManager\NodePaginator::class => \RZ\Roadiz\Core\ListManagers\NodePaginator::class,
+            \RZ\Roadiz\CoreBundle\ListManager\NodesSourcesPaginator::class => \RZ\Roadiz\Core\ListManagers\NodesSourcesPaginator::class,
             \RZ\Roadiz\CoreBundle\ListManager\Paginator::class => \RZ\Roadiz\Core\ListManagers\Paginator::class,
+            \RZ\Roadiz\CoreBundle\ListManager\QueryBuilderListManager::class => \RZ\Roadiz\Core\ListManagers\QueryBuilderListManager::class,
+            \RZ\Roadiz\CoreBundle\ListManager\TagListManager::class => \RZ\Roadiz\Core\ListManagers\TagListManager::class,
             \RZ\Roadiz\CoreBundle\Mailer\ContactFormManager::class => \RZ\Roadiz\Utils\ContactFormManager::class,
             \RZ\Roadiz\CoreBundle\Mailer\EmailManager::class => \RZ\Roadiz\Utils\EmailManager::class,
             \RZ\Roadiz\CoreBundle\Node\NodeDuplicator::class => \RZ\Roadiz\Utils\Node\NodeDuplicator::class,
+            \RZ\Roadiz\CoreBundle\Node\NodeFactory::class => \RZ\Roadiz\Utils\Node\NodeFactory::class,
             \RZ\Roadiz\CoreBundle\Node\NodeMover::class => \RZ\Roadiz\Utils\Node\NodeMover::class,
             \RZ\Roadiz\CoreBundle\Node\NodeNameChecker::class => \RZ\Roadiz\Utils\Node\NodeNameChecker::class,
             \RZ\Roadiz\CoreBundle\Node\NodeNamePolicyInterface::class => \RZ\Roadiz\Utils\Node\NodeNamePolicyInterface::class,
@@ -235,9 +239,13 @@ final class Aliases {
             \RZ\Roadiz\CoreBundle\Repository\NodeRepository::class => \RZ\Roadiz\Core\Repositories\NodeRepository::class,
             \RZ\Roadiz\CoreBundle\Repository\TranslationRepository::class => \RZ\Roadiz\Core\Repositories\TranslationRepository::class,
             \RZ\Roadiz\CoreBundle\Routing\NodeRouteHelper::class => \RZ\Roadiz\Core\Routing\NodeRouteHelper::class,
+            \RZ\Roadiz\CoreBundle\Routing\NodeRouter::class => \RZ\Roadiz\Core\Routing\NodeRouter::class,
+            \RZ\Roadiz\CoreBundle\SearchEngine\GlobalNodeSourceSearchHandler::class => \RZ\Roadiz\Core\SearchEngine\GlobalNodeSourceSearchHandler::class,
             \RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver::class => \RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver::class,
             \RZ\Roadiz\CoreBundle\Tag\TagFactory::class => \RZ\Roadiz\Utils\Tag\TagFactory::class,
             \RZ\Roadiz\CoreBundle\Theme\ThemeResolverInterface::class => \RZ\Roadiz\Utils\Theme\ThemeResolverInterface::class,
+            \RZ\Roadiz\CoreBundle\Traits\LoginRequestTrait::class => \RZ\Roadiz\CMS\Traits\LoginRequestTrait::class,
+            \RZ\Roadiz\CoreBundle\Traits\LoginResetTrait::class => \RZ\Roadiz\CMS\Traits\LoginResetTrait::class,
             \RZ\Roadiz\CoreBundle\Webhook\WebhookDispatcher::class => \RZ\Roadiz\Webhook\WebhookDispatcher::class,
             \RZ\Roadiz\CoreBundle\Xlsx\AbstractXlsxSerializer::class => \RZ\Roadiz\Core\Serializers\AbstractXlsxSerializer::class,
             \RZ\Roadiz\CoreBundle\Xlsx\NodeSourceXlsxSerializer::class => \RZ\Roadiz\Core\Serializers\NodeSourceXlsxSerializer::class,

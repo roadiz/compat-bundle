@@ -17,7 +17,9 @@ use RZ\Roadiz\Core\Repositories\TranslationRepository;
 use RZ\Roadiz\CoreBundle\Bag\NodeTypes;
 use RZ\Roadiz\CoreBundle\Bag\Roles;
 use RZ\Roadiz\CoreBundle\Bag\Settings;
+use RZ\Roadiz\CoreBundle\Node\NodeFactory;
 use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
+use RZ\Roadiz\CoreBundle\SearchEngine\Indexer\NodeIndexer;
 use RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver;
 use RZ\Roadiz\Document\Renderer\RendererInterface;
 use RZ\Roadiz\OpenId\OAuth2LinkGenerator;
@@ -71,8 +73,8 @@ abstract class Controller extends AbstractController
             RandomImageFinder::class => RandomImageFinder::class,
             PreviewResolverInterface::class => PreviewResolverInterface::class,
             \RZ\Roadiz\Preview\PreviewResolverInterface::class => PreviewResolverInterface::class,
-            RequestStack::class => 'request_stack',
-            Environment::class => 'twig',
+            RequestStack::class => RequestStack::class,
+            Environment::class => Environment::class,
             'nodesSourcesUrlCacheProvider' => CacheProvider::class,
             'dispatcher' => 'event_dispatcher',
             'event_dispatcher' => 'event_dispatcher',
@@ -81,6 +83,9 @@ abstract class Controller extends AbstractController
             TranslatorInterface::class => TranslatorInterface::class,
             RendererInterface::class => RendererInterface::class,
             DocumentUrlGeneratorInterface::class => DocumentUrlGeneratorInterface::class,
+            NodeFactory::class => NodeFactory::class,
+            \RZ\Roadiz\Utils\Node\NodeFactory::class => NodeFactory::class,
+            NodeIndexer::class => NodeIndexer::class,
         ]);
     }
 
