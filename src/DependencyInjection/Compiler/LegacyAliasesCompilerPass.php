@@ -20,6 +20,7 @@ class LegacyAliasesCompilerPass implements CompilerPassInterface
                     '\\Doctrine\\Event',
                     '\\Traits',
                     '\\CoreBundle\\Event\\',
+                    'RZ\\Roadiz\\CMS\\Forms',
                     '\\ListManager',
                     '\\NodeDuplicator',
                     '\\NodeRouteHelper',

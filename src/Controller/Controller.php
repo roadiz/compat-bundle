@@ -7,13 +7,15 @@ use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Persistence\ObjectManager;
 use Psr\Log\LoggerInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
-use RZ\Roadiz\Core\Entities\NodesSources;
-use RZ\Roadiz\Core\Entities\Translation;
-use RZ\Roadiz\Core\Exceptions\NoTranslationAvailableException;
-use RZ\Roadiz\Core\ListManagers\EntityListManager;
-use RZ\Roadiz\Core\ListManagers\EntityListManagerInterface;
+use RZ\Roadiz\CoreBundle\Entity\NodesSources;
+use RZ\Roadiz\CoreBundle\Entity\Translation;
+use RZ\Roadiz\CoreBundle\Exception\NoTranslationAvailableException;
+use RZ\Roadiz\CoreBundle\ListManager\EntityListManager;
+use RZ\Roadiz\CoreBundle\ListManager\EntityListManagerInterface;
 use RZ\Roadiz\Core\Models\FileAwareInterface;
-use RZ\Roadiz\Core\Repositories\TranslationRepository;
+use RZ\Roadiz\CoreBundle\Mailer\ContactFormManager;
+use RZ\Roadiz\CoreBundle\Mailer\EmailManager;
+use RZ\Roadiz\CoreBundle\Repository\TranslationRepository;
 use RZ\Roadiz\CoreBundle\Bag\NodeTypes;
 use RZ\Roadiz\CoreBundle\Bag\Roles;
 use RZ\Roadiz\CoreBundle\Bag\Settings;
@@ -21,11 +23,10 @@ use RZ\Roadiz\CoreBundle\Node\NodeFactory;
 use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
 use RZ\Roadiz\CoreBundle\SearchEngine\Indexer\NodeIndexer;
 use RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver;
+use RZ\Roadiz\CoreBundle\Security\User\UserViewer;
 use RZ\Roadiz\Document\Renderer\RendererInterface;
 use RZ\Roadiz\OpenId\OAuth2LinkGenerator;
 use RZ\Roadiz\Utils\Asset\Packages;
-use RZ\Roadiz\Utils\ContactFormManager;
-use RZ\Roadiz\Utils\EmailManager;
 use RZ\Roadiz\Utils\MediaFinders\RandomImageFinder;
 use RZ\Roadiz\Utils\UrlGenerators\DocumentUrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -86,6 +87,7 @@ abstract class Controller extends AbstractController
             NodeFactory::class => NodeFactory::class,
             \RZ\Roadiz\Utils\Node\NodeFactory::class => NodeFactory::class,
             NodeIndexer::class => NodeIndexer::class,
+            UserViewer::class => UserViewer::class,
         ]);
     }
 

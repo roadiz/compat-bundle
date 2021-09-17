@@ -28,32 +28,86 @@ services:
     RZ\Roadiz\CompatBundle\Controller\Controller:
     RZ\Roadiz\CompatBundle\Controller\FrontendController:
 
-    # These types need to be aliases early for FormPass
-    # because their need constructor injection
-    RZ\Roadiz\CMS\Forms\DocumentCollectionType:
-        alias: RZ\Roadiz\CoreBundle\Form\DocumentCollectionType
-    RZ\Roadiz\CMS\Forms\GroupsType:
-        alias: RZ\Roadiz\CoreBundle\Form\GroupsType
-    RZ\Roadiz\CMS\Forms\NodeTypesType:
-        alias: RZ\Roadiz\CoreBundle\Form\NodeTypesType
-    RZ\Roadiz\CMS\Forms\NodesType:
-        alias: RZ\Roadiz\CoreBundle\Form\NodesType
-    RZ\Roadiz\CMS\Forms\RolesType:
-        alias: RZ\Roadiz\CoreBundle\Form\RolesType
-    RZ\Roadiz\CMS\Forms\SettingDocumentType:
-        alias: RZ\Roadiz\CoreBundle\Form\SettingDocumentType
-    RZ\Roadiz\CMS\Forms\SettingGroupType:
-        alias: RZ\Roadiz\CoreBundle\Form\SettingGroupType
-    RZ\Roadiz\CMS\Forms\SettingType:
-        alias: RZ\Roadiz\CoreBundle\Form\SettingType
-    RZ\Roadiz\CMS\Forms\TagTranslationDocumentType:
-        alias: RZ\Roadiz\CoreBundle\Form\TagTranslationDocumentType
-    RZ\Roadiz\CMS\Forms\TranslationsType:
-        alias: RZ\Roadiz\CoreBundle\Form\TranslationsType
-    RZ\Roadiz\CMS\Forms\UrlAliasType:
-        alias: RZ\Roadiz\CoreBundle\Form\UrlAliasType
-    RZ\Roadiz\CMS\Forms\UsersType:
-        alias: RZ\Roadiz\CoreBundle\Form\UsersType
+    RZ\Roadiz\Attribute\Form\AttributeDocumentType: ~
+    RZ\Roadiz\Attribute\Form\AttributeGroupTranslationType: ~
+    RZ\Roadiz\Attribute\Form\AttributeGroupsType: ~
+    RZ\Roadiz\Attribute\Form\AttributeTranslationType: ~
+    RZ\Roadiz\Attribute\Form\AttributeType: ~
+    RZ\Roadiz\Attribute\Form\AttributeValueTranslationType: ~
+    RZ\Roadiz\Attribute\Form\AttributeValueType: ~
+    RZ\Roadiz\CMS\Forms\ColorType: ~
+    RZ\Roadiz\CMS\Forms\CompareDateType: ~
+    RZ\Roadiz\CMS\Forms\CompareDatetimeType: ~
+    RZ\Roadiz\CMS\Forms\Constraints\HexadecimalColor: ~
+    RZ\Roadiz\CMS\Forms\Constraints\HexadecimalColorValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\NodeTypeField: ~
+    RZ\Roadiz\CMS\Forms\Constraints\NodeTypeFieldValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\NonSqlReservedWord: ~
+    RZ\Roadiz\CMS\Forms\Constraints\NonSqlReservedWordValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\Recaptcha: ~
+    RZ\Roadiz\CMS\Forms\Constraints\RecaptchaValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\SimpleLatinString: ~
+    RZ\Roadiz\CMS\Forms\Constraints\SimpleLatinStringValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\UniqueEntity: ~
+    RZ\Roadiz\CMS\Forms\Constraints\UniqueEntityValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\UniqueFilename: ~
+    RZ\Roadiz\CMS\Forms\Constraints\UniqueFilenameValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\UniqueNodeName: ~
+    RZ\Roadiz\CMS\Forms\Constraints\UniqueNodeNameValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\UniqueTagName: ~
+    RZ\Roadiz\CMS\Forms\Constraints\UniqueTagNameValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\ValidAccountConfirmationToken: ~
+    RZ\Roadiz\CMS\Forms\Constraints\ValidAccountConfirmationTokenValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\ValidAccountEmail: ~
+    RZ\Roadiz\CMS\Forms\Constraints\ValidAccountEmailValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\ValidFacebookName: ~
+    RZ\Roadiz\CMS\Forms\Constraints\ValidFacebookNameValidator: ~
+    RZ\Roadiz\CMS\Forms\Constraints\ValidYaml: ~
+    RZ\Roadiz\CMS\Forms\Constraints\ValidYamlValidator: ~
+    RZ\Roadiz\CMS\Forms\CreatePasswordType: ~
+    RZ\Roadiz\CMS\Forms\CssType: ~
+    RZ\Roadiz\CMS\Forms\CustomFormsType: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\DocumentCollectionTransformer: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\EntityCollectionTransformer: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\ExplorerProviderItemTransformer: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\FolderCollectionTransformer: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\JoinDataTransformer: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\NodeTypeTransformer: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\PersistableTransformer: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\ProviderDataTransformer: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\ReversePersistableTransformer: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\TagTranslationDocumentsTransformer: ~
+    RZ\Roadiz\CMS\Forms\DataTransformer\TranslationTransformer: ~
+    RZ\Roadiz\CMS\Forms\DocumentCollectionType: ~
+    RZ\Roadiz\CMS\Forms\EnumerationType: ~
+    RZ\Roadiz\CMS\Forms\ExplorerProviderItemType: ~
+    RZ\Roadiz\CMS\Forms\ExtendedBooleanType: ~
+    RZ\Roadiz\CMS\Forms\FontVariantsType: ~
+    RZ\Roadiz\CMS\Forms\GroupsType: ~
+    RZ\Roadiz\CMS\Forms\HoneypotType: ~
+    RZ\Roadiz\CMS\Forms\JsonType: ~
+    RZ\Roadiz\CMS\Forms\LoginRequestForm: ~
+    RZ\Roadiz\CMS\Forms\LoginResetForm: ~
+    RZ\Roadiz\CMS\Forms\MarkdownType: ~
+    RZ\Roadiz\CMS\Forms\MultipleEnumerationType: ~
+    RZ\Roadiz\CMS\Forms\NodeStatesType: ~
+    RZ\Roadiz\CMS\Forms\NodeTypesType: ~
+    RZ\Roadiz\CMS\Forms\NodesType: ~
+    RZ\Roadiz\CMS\Forms\RecaptchaType: ~
+    RZ\Roadiz\CMS\Forms\RolesType: ~
+    RZ\Roadiz\CMS\Forms\SeparatorType: ~
+    RZ\Roadiz\CMS\Forms\SettingDocumentType: ~
+    RZ\Roadiz\CMS\Forms\SettingGroupType: ~
+    RZ\Roadiz\CMS\Forms\SettingType: ~
+    RZ\Roadiz\CMS\Forms\SettingTypeResolver: ~
+    RZ\Roadiz\CMS\Forms\TagTranslationDocumentType: ~
+    RZ\Roadiz\CMS\Forms\TagsType: ~
+    RZ\Roadiz\CMS\Forms\ThemesType: ~
+    RZ\Roadiz\CMS\Forms\TranslationsType: ~
+    RZ\Roadiz\CMS\Forms\UrlAliasType: ~
+    RZ\Roadiz\CMS\Forms\UsersType: ~
+    RZ\Roadiz\CMS\Forms\YamlType: ~
+    RZ\Roadiz\Webhook\Form\WebhookType: ~
 
     securityTokenStorage:
         alias: security.token_storage
