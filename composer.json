@@ -40,6 +40,8 @@
         "psr-4": {
             "RZ\\Roadiz\\CompatBundle\\": "src/"
         },
-        "files": ["src/deprecated.php"]
+        "files": [
+          "deprecated.php"
+        ]
     }
 }
