@@ -63,6 +63,8 @@ abstract class Controller extends AbstractController
             'defaultTranslation' => 'defaultTranslation',
             'em' => EntityManagerInterface::class,
             'stopwatch' => Stopwatch::class,
+            'requestStack' => RequestStack::class,
+            'translator' => TranslatorInterface::class,
             Stopwatch::class => Stopwatch::class,
             'securityTokenStorage' => TokenStorageInterface::class,
             TokenStorageInterface::class => TokenStorageInterface::class,
