@@ -6,11 +6,14 @@ namespace RZ\Roadiz\CompatBundle\Controller;
 use Psr\Log\LoggerInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
 use RZ\Roadiz\Core\Handlers\HandlerFactoryInterface;
+use RZ\Roadiz\CoreBundle\Bag\NodeTypes;
 use RZ\Roadiz\CoreBundle\Entity\Node;
 use RZ\Roadiz\CoreBundle\Entity\NodesSources;
+use RZ\Roadiz\CoreBundle\EntityApi\NodeSourceApi;
 use RZ\Roadiz\CoreBundle\EntityHandler\NodesSourcesHandler;
 use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
 use RZ\Roadiz\CoreBundle\Routing\NodeRouteHelper;
+use RZ\Roadiz\CoreBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\Utils\Asset\Packages;
 use Symfony\Component\Asset\Context\RequestStackContext;
 use Symfony\Component\Asset\PathPackage;
@@ -65,10 +68,20 @@ abstract class FrontendController extends AppController
     protected ?NodesSources $nodeSource = null;
     protected ?TranslationInterface $translation = null;
     /**
-     * @var ContainerInterface|null
+     * @var \Pimple\Container|null
      * @deprecated Use a service locator object
      */
-    protected ?ContainerInterface $themeContainer = null;
+    protected ?\Pimple\Container $themeContainer = null;
+
+    public static function getSubscribedServices()
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            'nodeTypesBag' => NodeTypes::class,
+            'nodeSourceApi' => NodeSourceApi::class,
+            LoggerInterface::class => LoggerInterface::class,
+            ThemeResolverInterface::class => ThemeResolverInterface::class
+        ]);
+    }
 
     /**
      * Append objects to global container.
@@ -177,7 +190,7 @@ abstract class FrontendController extends AppController
             ]);
         }
 
-        throw $this->createNotFoundException("No front-end controller found");
+        throw $this->createNotFoundException("No node was found to handle");
     }
 
     /**
@@ -185,12 +198,12 @@ abstract class FrontendController extends AppController
      * in order to avoid initializing same component again.
      *
      * @param array $baseAssignation
-     * @param ContainerInterface|null $themeContainer
+     * @param \Pimple\Container|null $themeContainer
      * @deprecated
      */
     public function __initFromOtherController(
         array &$baseAssignation = [],
-        ContainerInterface $themeContainer = null
+        \Pimple\Container $themeContainer = null
     ) {
         $this->assignation = $baseAssignation;
         $this->themeContainer = $themeContainer;
@@ -244,7 +257,7 @@ abstract class FrontendController extends AppController
             /*
              * Use a DI container to delay API requests
              */
-            $this->themeContainer = new Container();
+            $this->themeContainer = new \Pimple\Container();
 
             $this->get(Stopwatch::class)->start('extendAssignation');
             $this->extendAssignation();

@@ -423,7 +423,7 @@ abstract class AppController extends Controller
      */
     public function getTheme(): ?Theme
     {
-        $this->container['stopwatch']->start('getTheme');
+        $this->get('stopwatch')->start('getTheme');
         $themeResolver = $this->get(ThemeResolverInterface::class);
         if (null === $this->theme) {
             $className = new UnicodeString(static::getCalledClass());
@@ -437,7 +437,7 @@ abstract class AppController extends Controller
             }
             $this->theme = $themeResolver->findThemeByClass($className->toString());
         }
-        $this->container['stopwatch']->stop('getTheme');
+        $this->get('stopwatch')->stop('getTheme');
         return $this->theme;
     }
 
@@ -670,7 +670,7 @@ abstract class AppController extends Controller
      */
     protected function getHome(?TranslationInterface $translation = null): ?Node
     {
-        $this->container['stopwatch']->start('getHome');
+        $this->get('stopwatch')->start('getHome');
         if (null === $this->homeNode) {
             $nodeRepository = $this->get('em')->getRepository(Node::class);
             if ($translation !== null) {
@@ -679,7 +679,7 @@ abstract class AppController extends Controller
                 $this->homeNode = $nodeRepository->findHomeWithDefaultTranslation();
             }
         }
-        $this->container['stopwatch']->stop('getHome');
+        $this->get('stopwatch')->stop('getHome');
 
         return $this->homeNode;
     }

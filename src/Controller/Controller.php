@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace RZ\Roadiz\CompatBundle\Controller;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Psr\Log\LoggerInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
+use RZ\Roadiz\Core\Handlers\HandlerFactoryInterface;
 use RZ\Roadiz\CoreBundle\Entity\NodesSources;
 use RZ\Roadiz\CoreBundle\Entity\Translation;
 use RZ\Roadiz\CoreBundle\Exception\NoTranslationAvailableException;
@@ -47,6 +49,7 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
@@ -57,6 +60,10 @@ abstract class Controller extends AbstractController
     {
         return array_merge(parent::getSubscribedServices(), [
             'securityAuthenticationUtils' => AuthenticationUtils::class,
+            'defaultTranslation' => 'defaultTranslation',
+            'em' => EntityManagerInterface::class,
+            'stopwatch' => Stopwatch::class,
+            Stopwatch::class => Stopwatch::class,
             'securityTokenStorage' => TokenStorageInterface::class,
             TokenStorageInterface::class => TokenStorageInterface::class,
             'urlGenerator' => UrlGeneratorInterface::class,
@@ -88,6 +95,7 @@ abstract class Controller extends AbstractController
             \RZ\Roadiz\Utils\Node\NodeFactory::class => NodeFactory::class,
             NodeIndexer::class => NodeIndexer::class,
             UserViewer::class => UserViewer::class,
+            \RZ\Roadiz\Core\Handlers\HandlerFactoryInterface::class => HandlerFactoryInterface::class,
         ]);
     }
 
@@ -162,7 +170,7 @@ abstract class Controller extends AbstractController
     }
 
     /**
-     * Wrap `$this->container['urlGenerator']->generate`
+     * Wrap `$this->get('urlGenerator')->generate`
      *
      * @param string|NodesSources $route
      * @param array $parameters
@@ -211,7 +219,7 @@ abstract class Controller extends AbstractController
     /**
      * Custom route for redirecting routes with a trailing slash.
      *
-     * @param  Request $request
+     * @param Request $request
      *
      * @return RedirectResponse
      */

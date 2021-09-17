@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle;
 
-
 final class Aliases {
     /**
      * @return array<class-string, class-string>
@@ -13,6 +12,7 @@ final class Aliases {
         return [
             \RZ\Roadiz\CompatBundle\Controller\AppController::class => \RZ\Roadiz\CMS\Controllers\AppController::class,
             \RZ\Roadiz\CompatBundle\Controller\Controller::class => \RZ\Roadiz\CMS\Controllers\Controller::class,
+            \RZ\Roadiz\CompatBundle\Controller\FrontendController::class => \RZ\Roadiz\CMS\Controllers\FrontendController::class,
             \RZ\Roadiz\CoreBundle\Bag\NodeTypes::class => \RZ\Roadiz\Core\Bags\NodeTypes::class,
             \RZ\Roadiz\CoreBundle\Bag\Roles::class => \RZ\Roadiz\Core\Bags\Roles::class,
             \RZ\Roadiz\CoreBundle\Bag\Settings::class => \RZ\Roadiz\Core\Bags\Settings::class,
@@ -253,7 +253,6 @@ final class Aliases {
             \RZ\Roadiz\CoreBundle\Xlsx\SerializerInterface::class => \RZ\Roadiz\Core\Serializers\SerializerInterface::class,
             \RZ\Roadiz\CoreBundle\Xlsx\XlsxExporter::class => \RZ\Roadiz\Utils\XlsxExporter::class,
             \RZ\Roadiz\RozierBundle\Controller\BackendController::class => \RZ\Roadiz\CMS\Controllers\BackendController::class,
-            \Symfony\Component\DependencyInjection\Container::class => \Pimple\Container::class,
             \Symfony\Component\HttpKernel\Kernel::class => \RZ\Roadiz\Core\Kernel::class,
         ];
     }
