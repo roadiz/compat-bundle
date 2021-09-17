@@ -133,6 +133,7 @@ final class Aliases {
             \RZ\Roadiz\CoreBundle\Form\AttributeDocumentType::class => \RZ\Roadiz\Attribute\Form\AttributeDocumentType::class,
             \RZ\Roadiz\CoreBundle\Form\AttributeGroupTranslationType::class => \RZ\Roadiz\Attribute\Form\AttributeGroupTranslationType::class,
             \RZ\Roadiz\CoreBundle\Form\AttributeGroupsType::class => \RZ\Roadiz\Attribute\Form\AttributeGroupsType::class,
+            \RZ\Roadiz\CoreBundle\Form\AttributeGroupType::class => \RZ\Roadiz\Attribute\Form\AttributeGroupType::class,
             \RZ\Roadiz\CoreBundle\Form\AttributeImportType::class => \RZ\Roadiz\Attribute\Form\AttributeImportType::class,
             \RZ\Roadiz\CoreBundle\Form\AttributeTranslationType::class => \RZ\Roadiz\Attribute\Form\AttributeTranslationType::class,
             \RZ\Roadiz\CoreBundle\Form\AttributeType::class => \RZ\Roadiz\Attribute\Form\AttributeType::class,

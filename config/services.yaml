@@ -31,6 +31,7 @@ services:
     RZ\Roadiz\Attribute\Form\AttributeDocumentType: ~
     RZ\Roadiz\Attribute\Form\AttributeGroupTranslationType: ~
     RZ\Roadiz\Attribute\Form\AttributeGroupsType: ~
+    RZ\Roadiz\Attribute\Form\AttributeGroupType: ~
     RZ\Roadiz\Attribute\Form\AttributeTranslationType: ~
     RZ\Roadiz\Attribute\Form\AttributeType: ~
     RZ\Roadiz\Attribute\Form\AttributeValueTranslationType: ~
