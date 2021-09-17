@@ -4,8 +4,6 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        bind:
-            $discoveryUri: '%env(string:OPEN_ID_DISCOVERY_URL)%'
 
     RZ\Roadiz\CompatBundle\:
         resource: '../src/'
@@ -16,17 +14,10 @@ services:
             - '../src/Tests/'
             - '../src/Event/'
 
-    RZ\Roadiz\OpenId\:
-        resource: '%kernel.project_dir%/vendor/roadiz/openid/src/'
-        autowire: true
-        autoconfigure: true
-        exclude:
-            - '%kernel.project_dir%/vendor/roadiz/openid/src/OpenIdServiceProvider.php'
-
     # Explicit declaration
-    RZ\Roadiz\CompatBundle\Controller\AppController:
-    RZ\Roadiz\CompatBundle\Controller\Controller:
-    RZ\Roadiz\CompatBundle\Controller\FrontendController:
+    RZ\Roadiz\CompatBundle\Controller\AppController: ~
+    RZ\Roadiz\CompatBundle\Controller\Controller: ~
+    RZ\Roadiz\CompatBundle\Controller\FrontendController: ~
 
     RZ\Roadiz\Attribute\Form\AttributeDocumentType: ~
     RZ\Roadiz\Attribute\Form\AttributeGroupTranslationType: ~
