@@ -56,6 +56,17 @@ final class MaintenanceModeSubscriber implements EventSubscriberInterface
             'FontFaceCSS',
             'loginImagePage',
             'interventionRequestProcess',
+            '_profiler_home',
+            '_profiler_search',
+            '_profiler_search_bar',
+            '_profiler_phpinfo',
+            '_profiler_search_results',
+            '_profiler_open_file',
+            '_profiler',
+            '_profiler_router',
+            '_profiler_exception',
+            '_profiler_exception_css',
+            '_wdt',
         ];
     }
 
@@ -65,8 +76,7 @@ final class MaintenanceModeSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['onRequest', 31],
-            // Should be lower than RouterListener (32) to be executed after!
+            KernelEvents::REQUEST => ['onRequest'],
         ];
     }
 
