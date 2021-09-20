@@ -13,7 +13,7 @@ use RZ\Roadiz\CoreBundle\EntityApi\NodeSourceApi;
 use RZ\Roadiz\CoreBundle\EntityHandler\NodesSourcesHandler;
 use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
 use RZ\Roadiz\CoreBundle\Routing\NodeRouteHelper;
-use RZ\Roadiz\CoreBundle\Theme\ThemeResolverInterface;
+use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\Utils\Asset\Packages;
 use Symfony\Component\Asset\Context\RequestStackContext;
 use Symfony\Component\Asset\PathPackage;
@@ -398,8 +398,7 @@ abstract class FrontendController extends AppController
             /*
              * Use a DI container to delay API requests
              */
-            $this->themeContainer = new Container();
-
+            $this->themeContainer = new \Pimple\Container();
             $this->extendAssignation();
         }
     }

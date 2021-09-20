@@ -4,6 +4,11 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $publicDir: '%kernel.project_dir%/public'
+            $cacheDir: '%kernel.project_dir%/var/cache'
+            $projectDir: '%kernel.project_dir%'
+            $debug: '%kernel.debug%'
 
     RZ\Roadiz\CompatBundle\:
         resource: '../src/'
@@ -157,4 +162,25 @@ services:
         public: true
         alias: 'doctrine.orm.default_entity_manager'
 
+    #
+    # Themes aware stuff
+    #
+    roadiz_compat.twig_loader:
+        class: Twig\Loader\FilesystemLoader
+        tags: ['twig.loader']
+    RZ\Roadiz\CompatBundle\Routing\ThemeRoutesLoader:
+        tags: [ routing.loader ]
 
+    #
+    # Made routers theme aware
+    #
+    RZ\Roadiz\CompatBundle\Routing\ThemeAwareNodeUrlMatcher:
+        decorates: RZ\Roadiz\CoreBundle\Routing\NodeUrlMatcher
+        arguments:
+            - '@RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface'
+            - '@.inner'
+    RZ\Roadiz\CompatBundle\Routing\ThemeAwareNodeRouter:
+        decorates: RZ\Roadiz\CoreBundle\Routing\NodeRouter
+        arguments:
+            - '@RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface'
+            - '@.inner'

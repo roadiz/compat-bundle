@@ -11,6 +11,8 @@ use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
 use RZ\Roadiz\Core\Handlers\HandlerFactoryInterface;
 use RZ\Roadiz\CoreBundle\Entity\NodesSources;
 use RZ\Roadiz\CoreBundle\Entity\Translation;
+use RZ\Roadiz\CoreBundle\EntityApi\NodeApi;
+use RZ\Roadiz\CoreBundle\EntityApi\NodeSourceApi;
 use RZ\Roadiz\CoreBundle\Exception\NoTranslationAvailableException;
 use RZ\Roadiz\CoreBundle\ListManager\EntityListManager;
 use RZ\Roadiz\CoreBundle\ListManager\EntityListManagerInterface;
@@ -65,9 +67,12 @@ abstract class Controller extends AbstractController
             'stopwatch' => Stopwatch::class,
             'requestStack' => RequestStack::class,
             'translator' => TranslatorInterface::class,
+            'nodeApi' => NodeApi::class,
+            'nodeSourceApi' => NodeSourceApi::class,
             Stopwatch::class => Stopwatch::class,
             'securityTokenStorage' => TokenStorageInterface::class,
             TokenStorageInterface::class => TokenStorageInterface::class,
+            ContactFormManager::class => ContactFormManager::class,
             'urlGenerator' => UrlGeneratorInterface::class,
             EmailManager::class => EmailManager::class,
             'logger' => LoggerInterface::class,

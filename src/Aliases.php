@@ -244,7 +244,7 @@ final class Aliases {
             \RZ\Roadiz\CoreBundle\SearchEngine\GlobalNodeSourceSearchHandler::class => \RZ\Roadiz\Core\SearchEngine\GlobalNodeSourceSearchHandler::class,
             \RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver::class => \RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver::class,
             \RZ\Roadiz\CoreBundle\Tag\TagFactory::class => \RZ\Roadiz\Utils\Tag\TagFactory::class,
-            \RZ\Roadiz\CoreBundle\Theme\ThemeResolverInterface::class => \RZ\Roadiz\Utils\Theme\ThemeResolverInterface::class,
+            \RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface::class => \RZ\Roadiz\Utils\Theme\ThemeResolverInterface::class,
             \RZ\Roadiz\CoreBundle\Traits\LoginRequestTrait::class => \RZ\Roadiz\CMS\Traits\LoginRequestTrait::class,
             \RZ\Roadiz\CoreBundle\Traits\LoginResetTrait::class => \RZ\Roadiz\CMS\Traits\LoginResetTrait::class,
             \RZ\Roadiz\CoreBundle\Webhook\WebhookDispatcher::class => \RZ\Roadiz\Webhook\WebhookDispatcher::class,
