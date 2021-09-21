@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\DependencyInjection;
 
-use RZ\Roadiz\CompatBundle\Controller\AppController;
+use RZ\Roadiz\CompatBundle\Theme\StaticThemeResolver;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
 use RZ\Roadiz\CoreBundle\Entity\Translation;
 use RZ\Roadiz\CoreBundle\Repository\TranslationRepository;
-use RZ\Roadiz\CompatBundle\Theme\StaticThemeResolver;
 use Symfony\Component\Asset\PathPackage;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
