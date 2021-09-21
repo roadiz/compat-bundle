@@ -39,7 +39,7 @@
             "RZ\\Roadiz\\CompatBundle\\": "src/"
         },
         "files": [
-          "deprecated.php"
+            "deprecated.php"
         ]
     }
 }
