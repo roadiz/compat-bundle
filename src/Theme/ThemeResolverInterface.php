@@ -24,7 +24,6 @@ interface ThemeResolverInterface
      */
     public function findTheme(string $host = null): ?Theme;
 
-
     /**
      * @param string $classname
      *

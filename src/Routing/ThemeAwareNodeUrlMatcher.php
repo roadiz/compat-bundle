@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace RZ\Roadiz\CompatBundle\Routing;
 
 use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
+use RZ\Roadiz\CoreBundle\Entity\Theme;
 use RZ\Roadiz\CoreBundle\Routing\NodeUrlMatcher;
 use RZ\Roadiz\CoreBundle\Routing\NodeUrlMatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,14 +30,14 @@ final class ThemeAwareNodeUrlMatcher implements UrlMatcherInterface, RequestMatc
      */
     public function match(string $pathinfo)
     {
-        $this->innerMatcher->setTheme(
-            $this->themeResolver->findTheme($this->getContext()->getHost())
-        );
-
+        $decodedUrl = rawurldecode($pathinfo);
         /*
          * Try nodes routes
          */
-        return $this->innerMatcher->match($pathinfo);
+        return $this->matchNode(
+            $decodedUrl,
+            $this->themeResolver->findTheme($this->getContext()->getHost())
+        );
     }
 
     public function setContext(RequestContext $context)
@@ -51,7 +52,7 @@ final class ThemeAwareNodeUrlMatcher implements UrlMatcherInterface, RequestMatc
 
     public function matchRequest(Request $request)
     {
-        return $this->innerMatcher->matchRequest($request);
+        return $this->match($request->getPathInfo());
     }
 
     public function getSupportedFormatExtensions(): array
@@ -64,8 +65,11 @@ final class ThemeAwareNodeUrlMatcher implements UrlMatcherInterface, RequestMatc
         return $this->innerMatcher->getDefaultSupportedFormatExtension();
     }
 
-    public function matchNode(string $decodedUrl): array
+    public function matchNode(string $decodedUrl, ?Theme $theme): array
     {
-        return $this->innerMatcher->matchNode($decodedUrl);
+        return $this->innerMatcher->matchNode(
+            $decodedUrl,
+            $theme
+        );
     }
 }
