@@ -15,7 +15,6 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class RoadizCompatExtension extends Extension
@@ -31,6 +30,7 @@ class RoadizCompatExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setParameter('roadiz_compat.themes', $config['themes']);
         $container->setDefinition(
             'defaultTranslation',
             (new Definition())
@@ -72,7 +72,7 @@ class RoadizCompatExtension extends Extension
 
             // Register asset packages
             $container->setDefinition(
-                'roadiz_compat.assets._package' . $themeSlug,
+                'roadiz_compat.assets._package.' . $themeSlug,
                 (new Definition())
                     ->setClass(PathPackage::class)
                     ->setArguments([
