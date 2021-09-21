@@ -42,7 +42,6 @@ class RoadizCompatExtension extends Extension
         );
 
         $this->registerThemes($config, $container);
-        $this->registerThemeTranslatorResources($config, $container);
     }
 
     private function registerThemes(array $config, ContainerBuilder $container): void
@@ -100,55 +99,4 @@ class RoadizCompatExtension extends Extension
             $container->getDefinition(StaticThemeResolver::class)->setArgument('$themes', $frontendThemes);
         }
     }
-
-    private function registerThemeTranslatorResources(array $config, ContainerBuilder $container): void
-    {
-        $projectDir = $container->getParameter('kernel.project_dir');
-
-        foreach ($config['themes'] as $themeConfig) {
-            /** @var class-string<AppController> $className */
-            $className = $themeConfig['classname'];
-
-            // add translations paths
-            $translationFolder = $className::getTranslationsFolder();
-            if ($container->hasDefinition('translator.default') && file_exists($translationFolder)) {
-                $translator = $container->findDefinition('translator.default');
-                $files = [];
-                $finder = Finder::create()
-                    ->followLinks()
-                    ->files()
-                    ->filter(function (\SplFileInfo $file) {
-                        return 2 <= substr_count($file->getBasename(), '.') &&
-                            preg_match('/\.\w+$/', $file->getBasename());
-                    })
-                    ->in($translationFolder)
-                    ->sortByName()
-                ;
-                foreach ($finder as $file) {
-                    $fileNameParts = explode('.', basename($file));
-                    $locale = $fileNameParts[\count($fileNameParts) - 2];
-                    if (!isset($files[$locale])) {
-                        $files[$locale] = [];
-                    }
-
-                    $files[$locale][] = (string) $file;
-                }
-                $options = array_merge(
-                    $translator->getArgument(4),
-                    [
-                        'resource_files' => $files,
-                        'scanned_directories' => $scannedDirectories = [$translationFolder],
-                        'cache_vary' => [
-                            'scanned_directories' => array_map(static function (string $dir) use ($projectDir): string {
-                                return str_starts_with($dir, $projectDir.'/') ? substr($dir, 1 + \strlen($projectDir)) : $dir;
-                            }, $scannedDirectories),
-                        ],
-                    ]
-                );
-
-                $translator->replaceArgument(4, $options);
-            }
-        }
-    }
-
 }

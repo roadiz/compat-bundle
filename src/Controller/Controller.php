@@ -26,6 +26,7 @@ use RZ\Roadiz\CoreBundle\Bag\Settings;
 use RZ\Roadiz\CoreBundle\Node\NodeFactory;
 use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
 use RZ\Roadiz\CoreBundle\SearchEngine\Indexer\NodeIndexer;
+use RZ\Roadiz\CoreBundle\SearchEngine\NodeSourceSearchHandlerInterface;
 use RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver;
 use RZ\Roadiz\CoreBundle\Security\User\UserViewer;
 use RZ\Roadiz\Document\Renderer\RendererInterface;
@@ -62,6 +63,8 @@ abstract class Controller extends AbstractController
     {
         return array_merge(parent::getSubscribedServices(), [
             'securityAuthenticationUtils' => AuthenticationUtils::class,
+            NodeSourceSearchHandlerInterface::class => NodeSourceSearchHandlerInterface::class,
+            \RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandlerInterface::class => NodeSourceSearchHandlerInterface::class,
             'defaultTranslation' => 'defaultTranslation',
             'em' => EntityManagerInterface::class,
             'stopwatch' => Stopwatch::class,
