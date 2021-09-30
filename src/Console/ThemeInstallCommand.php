@@ -147,7 +147,7 @@ class ThemeInstallCommand extends Command
         return 0;
     }
 
-    protected function importThemeData(ThemeInfo $themeInfo, string $themeConfigPath)
+    protected function importThemeData(?ThemeInfo $themeInfo, string $themeConfigPath)
     {
         $data = $this->getThemeConfig($themeConfigPath);
 
@@ -186,7 +186,7 @@ class ThemeInstallCommand extends Command
                 $this->io->note(
                     'You should do a `bin/roadiz generate:nsentities`' .
                     ' to regenerate your node-types source classes, ' .
-                    'and a `bin/roadiz orm:schema-tool:update --dump-sql --force` ' .
+                    'and a `bin/roadiz doctrine:schema:update --dump-sql --force` ' .
                     'to apply your changes into database.'
                 );
             }

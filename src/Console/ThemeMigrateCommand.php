@@ -77,7 +77,7 @@ class ThemeMigrateCommand extends Command
             );
             $this->runCommand(sprintf('generate:nsentities'), 'dev', false, $input->isInteractive());
             $this->runCommand(
-                sprintf('orm:schema-tool:update --dump-sql --force'),
+                sprintf('doctrine:schema:update --dump-sql --force'),
                 'dev',
                 false,
                 $input->isInteractive()
