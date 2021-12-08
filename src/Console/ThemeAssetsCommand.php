@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Console;
@@ -71,7 +72,7 @@ class ThemeAssetsCommand extends Command
             ], [
                 ['Given name', $themeInfo->getName()],
                 ['Theme path', $themeInfo->getThemePath()],
-                ['Assets path', $themeInfo->getThemePath().'/static'],
+                ['Assets path', $themeInfo->getThemePath() . '/static'],
             ]);
 
             $this->themeGenerator->installThemeAssets($themeInfo, $expectedMethod);

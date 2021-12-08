@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Controller;
@@ -355,8 +356,8 @@ abstract class AppController extends Controller
             'head' => [
                 'ajax' => $this->getRequest()->isXmlHttpRequest(),
                 'devMode' => $kernel->isDebug(),
-                'maintenanceMode' => (boolean) $this->getSettingsBag()->get('maintenance_mode'),
-                'useCdn' => (boolean) $this->getSettingsBag()->get('use_cdn'),
+                'maintenanceMode' => (bool) $this->getSettingsBag()->get('maintenance_mode'),
+                'useCdn' => (bool) $this->getSettingsBag()->get('use_cdn'),
                 'universalAnalyticsId' => $this->getSettingsBag()->get('universal_analytics_id'),
                 'googleTagManagerId' => $this->getSettingsBag()->get('google_tag_manager_id'),
                 'baseUrl' => $this->getRequest()->getSchemeAndHttpHost() . $this->getRequest()->getBasePath(),

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Console;
@@ -109,10 +110,10 @@ class ThemeInstallCommand extends Command
         if ((new UnicodeString($input->getArgument('classname')))->endsWith('config.yml')) {
             $classname = realpath($input->getArgument('classname'));
             if (file_exists($classname)) {
-                $this->io->note('Install assets directly from file: '. $classname);
+                $this->io->note('Install assets directly from file: ' . $classname);
                 $themeConfigPath = $classname;
             } else {
-                $this->io->error($classname .' configuration file is not readable.');
+                $this->io->error($classname . ' configuration file is not readable.');
                 return 1;
             }
         } else {
@@ -126,14 +127,14 @@ class ThemeInstallCommand extends Command
                 throw new RuntimeException($themeInfo->getClassname() . ' is not a valid Roadiz theme.');
             }
             if (!file_exists($themeConfigPath)) {
-                $this->io->warning($themeInfo->getName() .' theme does not have any configuration.');
+                $this->io->warning($themeInfo->getName() . ' theme does not have any configuration.');
                 return 1;
             }
         }
 
         if ($output->isVeryVerbose() && null !== $themeInfo) {
-            $this->io->writeln('Theme name is: <info>'. $themeInfo->getName() .'</info>.');
-            $this->io->writeln('Theme assets are located in <info>'. $themeInfo->getThemePath() .'/static</info>.');
+            $this->io->writeln('Theme name is: <info>' . $themeInfo->getName() . '</info>.');
+            $this->io->writeln('Theme assets are located in <info>' . $themeInfo->getThemePath() . '/static</info>.');
         }
 
         if ($input->getOption('data')) {
@@ -221,7 +222,7 @@ class ThemeInstallCommand extends Command
             } catch (EntityAlreadyExistsException $e) {
                 $this->io->writeln(
                     '* <info>' . $file->getPathname() . '</info>' .
-                    ' <error>has NOT been imported ('.$e->getMessage().')</error>.'
+                    ' <error>has NOT been imported (' . $e->getMessage() . ')</error>.'
                 );
             }
         }

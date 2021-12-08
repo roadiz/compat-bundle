@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Console;
@@ -61,7 +62,7 @@ class ThemeInfoCommand extends Command
                 ['Given name', $themeInfo->getName()],
                 ['Theme classname', $themeInfo->getClassname()],
                 ['Theme path', $themeInfo->getThemePath()],
-                ['Assets path', $themeInfo->getThemePath().'/static'],
+                ['Assets path', $themeInfo->getThemePath() . '/static'],
             ]);
             return 0;
         }

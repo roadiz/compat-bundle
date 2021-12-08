@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\DependencyInjection\Compiler;
@@ -67,7 +68,7 @@ class ThemesTranslatorPathsCompilerPass implements CompilerPassInterface
                         'scanned_directories' => $scannedDirectories = [$translationFolder],
                         'cache_vary' => [
                             'scanned_directories' => array_map(static function (string $dir) use ($projectDir): string {
-                                return str_starts_with($dir, $projectDir.'/') ? substr($dir, 1 + \strlen($projectDir)) : $dir;
+                                return str_starts_with($dir, $projectDir . '/') ? substr($dir, 1 + \strlen($projectDir)) : $dir;
                             }, $scannedDirectories),
                         ],
                     ]

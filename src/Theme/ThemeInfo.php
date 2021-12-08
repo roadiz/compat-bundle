@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Theme;
@@ -69,7 +70,7 @@ final class ThemeInfo
             case 'DefaultTheme':
                 return '\\Themes\\DefaultTheme\\DefaultThemeApp';
             default:
-                return '\\Themes\\'.$themeName.'\\'.$themeName. 'App';
+                return '\\Themes\\' . $themeName . '\\' . $themeName . 'App';
         }
     }
 
@@ -123,7 +124,8 @@ final class ThemeInfo
         if ($this->isProtected()) {
             return true;
         }
-        if ($this->filesystem->exists($this->getThemePath()) ||
+        if (
+            $this->filesystem->exists($this->getThemePath()) ||
             $this->filesystem->exists($this->projectDir . '/vendor/roadiz/' . $this->getThemeName()) ||
             $this->filesystem->exists($this->projectDir . '/vendor/roadiz/roadiz/themes/' . $this->getThemeName())
         ) {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Controller;
@@ -452,8 +453,10 @@ abstract class FrontendController extends AppController
     protected function denyAccessUnlessPublished()
     {
         if (null !== $this->nodeSource) {
-            if ($this->nodeSource->getPublishedAt() > new \DateTime() &&
-                !$this->get(PreviewResolverInterface::class)->isPreview()) {
+            if (
+                $this->nodeSource->getPublishedAt() > new \DateTime() &&
+                !$this->get(PreviewResolverInterface::class)->isPreview()
+            ) {
                 throw $this->createNotFoundException();
             }
         }

@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle;
 
-final class Aliases {
+final class Aliases
+{
     /**
      * @return array<class-string, class-string>
      */

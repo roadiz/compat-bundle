@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Console;
@@ -81,11 +82,13 @@ class ThemeGenerateCommand extends Command
         $name = str_replace('/', '\\', $input->getArgument('name'));
         $themeInfo = new ThemeInfo($name, $this->projectDir);
 
-        if ($io->confirm(
-            'Are you sure you want to generate a new theme called: "' . $themeInfo->getThemeName() . '"' .
-            ' using ' . $branch . ' branch and installing its assets with ' . $expectedMethod . ' method?',
-            false
-        )) {
+        if (
+            $io->confirm(
+                'Are you sure you want to generate a new theme called: "' . $themeInfo->getThemeName() . '"' .
+                ' using ' . $branch . ' branch and installing its assets with ' . $expectedMethod . ' method?',
+                false
+            )
+        ) {
             if (!$themeInfo->exists()) {
                 $this->themeGenerator->downloadTheme($themeInfo, $branch);
                 $io->success('BaseTheme cloned into ' . $themeInfo->getThemePath());
