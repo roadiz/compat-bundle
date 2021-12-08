@@ -41,9 +41,11 @@ class ThemeInstallCommand extends Command
     protected RolesImporter $rolesImporter;
     protected GroupsImporter $groupsImporter;
     protected AttributeImporter $attributeImporter;
+    protected ManagerRegistry $managerRegistry;
 
     /**
      * @param string $projectDir
+     * @param ManagerRegistry $managerRegistry
      * @param ThemeGenerator $themeGenerator
      * @param NodeTypesImporter $nodeTypesImporter
      * @param TagsImporter $tagsImporter
@@ -54,6 +56,7 @@ class ThemeInstallCommand extends Command
      */
     public function __construct(
         string $projectDir,
+        ManagerRegistry $managerRegistry,
         ThemeGenerator $themeGenerator,
         NodeTypesImporter $nodeTypesImporter,
         TagsImporter $tagsImporter,
@@ -71,6 +74,7 @@ class ThemeInstallCommand extends Command
         $this->rolesImporter = $rolesImporter;
         $this->groupsImporter = $groupsImporter;
         $this->attributeImporter = $attributeImporter;
+        $this->managerRegistry = $managerRegistry;
     }
 
     protected function configure()
@@ -211,10 +215,7 @@ class ThemeInstallCommand extends Command
         if (!$this->dryRun) {
             try {
                 $importer->import(file_get_contents($file->getPathname()));
-
-                /** @var ManagerRegistry $managerRegistry */
-                $managerRegistry = $this->getHelper('doctrine')->getManagerRegistry();
-                $managerRegistry->getManager()->flush();
+                $this->managerRegistry->getManager()->flush();
                 $this->io->writeln(
                     '* <info>' . $file->getPathname() . '</info> file has been imported.'
                 );
