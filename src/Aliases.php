@@ -245,6 +245,7 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\Routing\NodeRouter::class => \RZ\Roadiz\Core\Routing\NodeRouter::class,
             \RZ\Roadiz\CoreBundle\SearchEngine\GlobalNodeSourceSearchHandler::class => \RZ\Roadiz\Core\SearchEngine\GlobalNodeSourceSearchHandler::class,
             \RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver::class => \RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver::class,
+            \RZ\Roadiz\CoreBundle\SearchEngine\NodeSourceSearchHandlerInterface::class => \RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandlerInterface::class,
             \RZ\Roadiz\CoreBundle\Tag\TagFactory::class => \RZ\Roadiz\Utils\Tag\TagFactory::class,
             \RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface::class => \RZ\Roadiz\Utils\Theme\ThemeResolverInterface::class,
             \RZ\Roadiz\CoreBundle\Traits\LoginRequestTrait::class => \RZ\Roadiz\CMS\Traits\LoginRequestTrait::class,
