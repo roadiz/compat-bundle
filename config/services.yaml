@@ -145,6 +145,9 @@ services:
     formFactory:
         alias: 'form.factory'
         public: true
+    csrfTokenManager:
+        alias: 'security.csrf.token_manager'
+        public: true
     dispatcher:
         alias: 'event_dispatcher'
         public: true
