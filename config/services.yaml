@@ -139,6 +139,9 @@ services:
     rolesBag:
         alias: RZ\Roadiz\CoreBundle\Bag\Roles
         public: true
+    assetPackages:
+        alias: RZ\Roadiz\Utils\Asset\Packages
+        public: true
     formFactory:
         alias: 'form.factory'
         public: true
