@@ -258,7 +258,6 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\Xlsx\NodeSourceXlsxSerializer::class => \RZ\Roadiz\Core\Serializers\NodeSourceXlsxSerializer::class,
             \RZ\Roadiz\CoreBundle\Xlsx\SerializerInterface::class => \RZ\Roadiz\Core\Serializers\SerializerInterface::class,
             \RZ\Roadiz\CoreBundle\Xlsx\XlsxExporter::class => \RZ\Roadiz\Utils\XlsxExporter::class,
-            \RZ\Roadiz\RozierBundle\Controller\BackendController::class => \RZ\Roadiz\CMS\Controllers\BackendController::class,
             \Symfony\Component\HttpKernel\Kernel::class => \RZ\Roadiz\Core\Kernel::class,
         ];
     }
