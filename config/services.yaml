@@ -142,9 +142,6 @@ services:
     assetPackages:
         alias: RZ\Roadiz\Utils\Asset\Packages
         public: true
-    translator:
-        alias: 'translator.data_collector'
-        public: true
     Symfony\Contracts\Translation\TranslatorInterface:
         alias: 'translator.data_collector'
         public: true
@@ -156,6 +153,9 @@ services:
         public: true
     dispatcher:
         alias: 'event_dispatcher'
+        public: true
+    logger:
+        alias: 'monolog.logger'
         public: true
     Symfony\Component\HttpFoundation\ParameterBag:
         alias: RZ\Roadiz\CoreBundle\Bag\Settings
