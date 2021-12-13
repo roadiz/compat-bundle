@@ -142,6 +142,12 @@ services:
     assetPackages:
         alias: RZ\Roadiz\Utils\Asset\Packages
         public: true
+    translator:
+        alias: 'translator.data_collector'
+        public: true
+    Symfony\Contracts\Translation\TranslatorInterface:
+        alias: 'translator.data_collector'
+        public: true
     formFactory:
         alias: 'form.factory'
         public: true
