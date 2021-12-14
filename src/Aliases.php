@@ -135,6 +135,8 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\Event\User\UserUpdatedEvent::class => \RZ\Roadiz\Core\Events\User\UserUpdatedEvent::class,
             \RZ\Roadiz\CoreBundle\Exception\ForceResponseException::class => \RZ\Roadiz\Core\Exceptions\ForceResponseException::class,
             \RZ\Roadiz\CoreBundle\Exception\NoTranslationAvailableException::class => \RZ\Roadiz\Core\Exceptions\NoTranslationAvailableException::class,
+            \RZ\Roadiz\CoreBundle\Explorer\ExplorerItemInterface::class => \RZ\Roadiz\Explorer\ExplorerItemInterface::class,
+            \RZ\Roadiz\CoreBundle\Explorer\ExplorerProviderInterface::class => \RZ\Roadiz\Explorer\ExplorerProviderInterface::class,
             \RZ\Roadiz\CoreBundle\Form\AttributeChoiceType::class => \RZ\Roadiz\Attribute\Form\AttributeChoiceType::class,
             \RZ\Roadiz\CoreBundle\Form\AttributeDocumentType::class => \RZ\Roadiz\Attribute\Form\AttributeDocumentType::class,
             \RZ\Roadiz\CoreBundle\Form\AttributeGroupTranslationType::class => \RZ\Roadiz\Attribute\Form\AttributeGroupTranslationType::class,
