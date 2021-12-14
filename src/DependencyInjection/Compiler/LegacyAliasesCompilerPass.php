@@ -26,6 +26,7 @@ class LegacyAliasesCompilerPass implements CompilerPassInterface
                     '\\NodeDuplicator',
                     '\\NodeRouteHelper',
                     'AbstractXlsxSerializer',
+                    'RZ\\Roadiz\\CoreBundle\\Explorer\\',
                     'BackendController',
                     'Kernel',
                     'CustomFormHelper',
