@@ -85,7 +85,6 @@ class ThemeMigrateCommand extends Command
             );
             $this->runCommand(sprintf('cache:clear'), 'dev', false, $input->isInteractive());
             $this->runCommand(sprintf('cache:clear'), 'prod', false, $input->isInteractive());
-            $this->runCommand(sprintf('cache:clear-fpm'), 'prod', false, $input->isInteractive());
         }
         return 0;
     }
