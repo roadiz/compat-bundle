@@ -19,7 +19,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=7.4",
-        "symfony/framework-bundle": "5.3.*",
+        "symfony/framework-bundle": "5.4.*",
         "pimple/pimple": "*"
     },
     "require-dev": {
