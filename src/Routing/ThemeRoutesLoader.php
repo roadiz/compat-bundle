@@ -63,7 +63,7 @@ final class ThemeRoutesLoader extends Loader
         return $routeCollection;
     }
 
-    public function supports($resource, string $type = null)
+    public function supports($resource, string $type = null): bool
     {
         return 'themes' === $type;
     }

@@ -29,7 +29,7 @@ final class ThemeAwareNodeUrlMatcher implements UrlMatcherInterface, RequestMatc
     /**
      * {@inheritdoc}
      */
-    public function match(string $pathinfo)
+    public function match(string $pathinfo): array
     {
         $decodedUrl = rawurldecode($pathinfo);
         /*
@@ -46,12 +46,12 @@ final class ThemeAwareNodeUrlMatcher implements UrlMatcherInterface, RequestMatc
         $this->innerMatcher->setContext($context);
     }
 
-    public function getContext()
+    public function getContext(): RequestContext
     {
         return $this->innerMatcher->getContext();
     }
 
-    public function matchRequest(Request $request)
+    public function matchRequest(Request $request): array
     {
         return $this->match($request->getPathInfo());
     }

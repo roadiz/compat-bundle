@@ -10,6 +10,7 @@ use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
 final class ThemeAwareNodeRouter implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface
@@ -32,38 +33,38 @@ final class ThemeAwareNodeRouter implements RouterInterface, RequestMatcherInter
         $this->innerRouter->setContext($context);
     }
 
-    public function getContext()
+    public function getContext(): RequestContext
     {
         return $this->innerRouter->getContext();
     }
 
-    public function matchRequest(Request $request)
+    public function matchRequest(Request $request): array
     {
         return $this->innerRouter->matchRequest($request);
     }
 
-    public function getRouteCollection()
+    public function getRouteCollection(): RouteCollection
     {
         return $this->innerRouter->getRouteCollection();
     }
 
-    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         $this->innerRouter->setTheme($this->themeResolver->findTheme($this->getContext()->getHost()));
         return $this->innerRouter->generate($name, $parameters, $referenceType);
     }
 
-    public function match(string $pathinfo)
+    public function match(string $pathinfo): array
     {
         return $this->innerRouter->match($pathinfo);
     }
 
-    public function supports($name)
+    public function supports($name): bool
     {
         return $this->innerRouter->supports($name);
     }
 
-    public function getRouteDebugMessage($name, array $parameters = [])
+    public function getRouteDebugMessage($name, array $parameters = []): string
     {
         return $this->innerRouter->getRouteDebugMessage($name, $parameters);
     }
