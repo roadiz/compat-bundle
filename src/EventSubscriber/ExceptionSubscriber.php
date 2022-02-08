@@ -53,7 +53,7 @@ final class ExceptionSubscriber implements EventSubscriberInterface
     /**
      * @return array
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         /*
          * Roadiz exception handling must be triggered AFTER firewall exceptions
