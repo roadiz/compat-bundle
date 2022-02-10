@@ -39,10 +39,9 @@ final class ExceptionSubscriber implements EventSubscriberInterface
         ThemeResolverInterface $themeResolver,
         ExceptionViewer $viewer,
         ContainerInterface $serviceLocator,
-        ?LoggerInterface $logger,
+        LoggerInterface $logger,
         bool $debug
     ) {
-        $this->logger = $logger ?? new NullLogger();
         $this->debug = $debug;
         $this->viewer = $viewer;
         $this->themeResolver = $themeResolver;
@@ -109,23 +108,6 @@ final class ExceptionSubscriber implements EventSubscriberInterface
                 return;
             }
         }
-
-        // Customize your response object to display the exception details
-        $response = $this->getEmergencyResponse($exception, $event->getRequest());
-        // Set http code according to status
-        $response->setStatusCode($this->viewer->getHttpStatusCode($exception));
-
-        // HttpExceptionInterface is a special type of exception that
-        // holds status code and header details
-        if ($exception instanceof HttpExceptionInterface) {
-            $response->headers->replace($exception->getHeaders());
-        }
-
-        if ($response instanceof JsonResponse) {
-            $response->headers->set('Content-Type', 'application/problem+json');
-        }
-        // Send the modified response object to the event
-        $event->setResponse($response);
     }
 
     /**
