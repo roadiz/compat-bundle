@@ -58,49 +58,77 @@ class ThemeMigrateCommand extends Command
 
         if ($input->getOption('dry-run')) {
             $this->runCommand(
-                sprintf('themes:install --data "%s" --dry-run', $input->getArgument('classname')),
+                'themes:install',
+                sprintf('--data "%s" --dry-run', $input->getArgument('classname')),
                 'dev',
-                false,
-                $input->isInteractive()
+                $input->isInteractive(),
+                $output->isQuiet(),
             );
         } else {
+
             $this->runCommand(
-                sprintf('migrations:migrate --allow-no-migration'),
+                'doctrine:migrations:migrate',
+                '--allow-no-migration',
                 'dev',
                 false,
-                false
-            );
+                $output->isQuiet()
+            ) === 0 ? $io->success('doctrine:migrations:migrate') : $io->error('doctrine:migrations:migrate');
+
             $this->runCommand(
-                sprintf('themes:install --data "%s"', $input->getArgument('classname')),
+                'themes:install',
+                sprintf('--data "%s"', $input->getArgument('classname')),
                 'dev',
-                false,
-                $input->isInteractive()
-            );
-            $this->runCommand(sprintf('generate:nsentities'), 'dev', false, $input->isInteractive());
+                $input->isInteractive(),
+                $output->isQuiet()
+            ) === 0 ? $io->success('themes:install') : $io->error('themes:install');
+
             $this->runCommand(
-                sprintf('doctrine:schema:update --dump-sql --force'),
+                'generate:nsentities',
+                '',
                 'dev',
-                false,
-                $input->isInteractive()
-            );
-            $this->runCommand(sprintf('cache:clear'), 'dev', false, $input->isInteractive());
-            $this->runCommand(sprintf('cache:clear'), 'prod', false, $input->isInteractive());
+                $input->isInteractive(),
+                $output->isQuiet()
+            ) === 0 ? $io->success('generate:nsentities') : $io->error('generate:nsentities');
+
+            $this->runCommand(
+                'doctrine:schema:update',
+                '--dump-sql --force',
+                'dev',
+                $input->isInteractive(),
+                $output->isQuiet()
+            ) === 0 ? $io->success('doctrine:schema:update') : $io->error('doctrine:schema:update');
+
+            $this->runCommand(
+                'cache:clear',
+                '',
+                'dev',
+                $input->isInteractive(),
+                $output->isQuiet()
+            ) === 0 ? $io->success('cache:clear --env=dev') : $io->error('cache:clear --env=dev');
+
+            $this->runCommand(
+                'cache:clear',
+                '',
+                'prod',
+                $input->isInteractive(),
+                $output->isQuiet()
+            ) === 0 ? $io->success('cache:clear --env=prod') : $io->error('cache:clear --env=prod');
         }
         return 0;
     }
 
-    /**
-     * @param string $command
-     * @param string $environment
-     * @param bool   $preview
-     *
-     * @return int
-     */
-    protected function runCommand(string $command, string $environment = 'dev', bool $preview = false, bool $interactive = true)
-    {
-        $args = $interactive ? ' -v ' : ' -nq ';
+    protected function runCommand(
+        string $command,
+        string $args = '',
+        string $environment = 'dev',
+        bool $interactive = true,
+        bool $quiet = false
+    ): int {
+        $args .= $interactive ? '' : ' --no-interaction ';
+        $args .= $quiet ? ' --quiet ' : ' -v ';
+        $args .= ' --env ' . $environment;
         $process = Process::fromShellCommandline(
-            'php bin/console ' . $args . $command . ' --env ' . $environment . ($preview ? ' --preview' : '')
+            'php bin/console ' . $command  . ' ' . $args
         );
         $process->setWorkingDirectory($this->projectDir);
         $process->setTty($interactive);

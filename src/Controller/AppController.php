@@ -443,7 +443,7 @@ abstract class AppController extends Controller
     }
 
     /**
-     * Publish a confirm message in Session flash bag and
+     * Publish a confirmation message in Session flash bag and
      * logger interface.
      *
      * @param Request $request
