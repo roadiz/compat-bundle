@@ -65,7 +65,6 @@ class ThemeMigrateCommand extends Command
                 $output->isQuiet(),
             );
         } else {
-
             $this->runCommand(
                 'doctrine:migrations:migrate',
                 '--allow-no-migration',
