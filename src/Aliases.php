@@ -133,6 +133,8 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\Event\User\UserEnabledEvent::class => \RZ\Roadiz\Core\Events\User\UserEnabledEvent::class,
             \RZ\Roadiz\CoreBundle\Event\User\UserPasswordChangedEvent::class => \RZ\Roadiz\Core\Events\User\UserPasswordChangedEvent::class,
             \RZ\Roadiz\CoreBundle\Event\User\UserUpdatedEvent::class => \RZ\Roadiz\Core\Events\User\UserUpdatedEvent::class,
+            \RZ\Roadiz\CoreBundle\Event\User\UserJoinedGroupEvent::class => \RZ\Roadiz\Core\Events\User\UserJoinedGroupEvent::class,
+            \RZ\Roadiz\CoreBundle\Event\User\UserLeavedGroupEvent::class => \RZ\Roadiz\Core\Events\User\UserLeavedGroupEvent::class,
             \RZ\Roadiz\CoreBundle\Exception\ForceResponseException::class => \RZ\Roadiz\Core\Exceptions\ForceResponseException::class,
             \RZ\Roadiz\CoreBundle\Exception\NoTranslationAvailableException::class => \RZ\Roadiz\Core\Exceptions\NoTranslationAvailableException::class,
             \RZ\Roadiz\CoreBundle\Explorer\AbstractExplorerProvider::class => \RZ\Roadiz\Explorer\AbstractExplorerProvider::class,
