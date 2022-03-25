@@ -196,3 +196,15 @@ services:
         arguments:
             - '@RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface'
             - '@.inner'
+
+    RZ\Roadiz\CompatBundle\EventSubscriber\MaintenanceModeSubscriber:
+        arguments:
+            - '@RZ\Roadiz\CoreBundle\Bag\Settings'
+            - '@security.helper'
+            - '@RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface'
+            - '@service_container'
+    RZ\Roadiz\CompatBundle\EventSubscriber\ExceptionSubscriber:
+        arguments:
+            - '@RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface'
+            - '@RZ\Roadiz\CoreBundle\Exception\ExceptionViewer'
+            - '@service_container'

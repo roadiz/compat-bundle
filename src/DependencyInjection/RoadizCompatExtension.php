@@ -38,7 +38,7 @@ class RoadizCompatExtension extends Extension
                 ->setFactory([new Reference(TranslationRepository::class), 'findDefault'])
                 ->setShared(true)
                 ->setPublic(true)
-                ->setDeprecated()
+                ->setDeprecated('roadiz_compat', '2.0.0', '%service_id% service is deprecated, use TranslationRepository instead')
         );
 
         $this->registerThemes($config, $container);

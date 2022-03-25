@@ -13,15 +13,18 @@ final class ThemeRoutesLoader extends Loader
     private bool $isLoaded = false;
     private ThemeResolverInterface $themeResolver;
 
-    /**
-     * @param ThemeResolverInterface $themeResolver
-     */
-    public function __construct(ThemeResolverInterface $themeResolver)
+    public function __construct(ThemeResolverInterface $themeResolver, string $env = null)
     {
+        parent::__construct($env);
         $this->themeResolver = $themeResolver;
     }
 
-    public function load($resource, string $type = null)
+    /**
+     * @param mixed $resource
+     * @param string|null $type
+     * @return RouteCollection
+     */
+    public function load($resource, string $type = null): RouteCollection
     {
         if (true === $this->isLoaded) {
             throw new \RuntimeException('Do not add the "extra" loader twice');

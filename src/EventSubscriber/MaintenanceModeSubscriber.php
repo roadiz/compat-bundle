@@ -109,7 +109,7 @@ final class MaintenanceModeSubscriber implements EventSubscriberInterface
      *
      * @return AbstractController
      */
-    private function getControllerForTheme(Theme $theme, Request $request)
+    private function getControllerForTheme(Theme $theme, Request $request): AbstractController
     {
         $ctrlClass = $theme->getClassName();
         $controller = new $ctrlClass();

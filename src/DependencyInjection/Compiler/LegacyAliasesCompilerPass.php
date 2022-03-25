@@ -35,7 +35,9 @@ class LegacyAliasesCompilerPass implements CompilerPassInterface
                     '\\DataTransformer',
                 ])
             ) {
-                $container->setAlias($alias, $className)->setPublic(true)->setDeprecated(true);
+                $container->setAlias($alias, $className)
+                    ->setPublic(true)
+                    ->setDeprecated('roadiz_compat', '2.0.0', '%alias_id% is deprecated and should only be used for legacy themes');
             }
         }
     }

@@ -185,7 +185,7 @@ final class ExceptionSubscriber implements EventSubscriberInterface
      *
      * @return Response
      */
-    protected function createThemeNotFoundResponse(Theme $theme, $exception, ExceptionEvent $event)
+    protected function createThemeNotFoundResponse(Theme $theme, $exception, ExceptionEvent $event): Response
     {
         /*
          * Create a new controller for serving
