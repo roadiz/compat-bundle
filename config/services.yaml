@@ -159,11 +159,6 @@ services:
         public: true
     Symfony\Component\HttpFoundation\ParameterBag:
         alias: RZ\Roadiz\CoreBundle\Bag\Settings
-    Doctrine\Common\Cache\CacheProvider:
-        alias: 'doctrine.orm.cache.provider.cache.doctrine.orm.default.metadata'
-    nodesSourcesUrlCacheProvider:
-        alias: 'doctrine.orm.cache.provider.cache.doctrine.orm.default.metadata'
-        public: true
     securityAuthenticationUtils:
         alias: Symfony\Component\Security\Http\Authentication\AuthenticationUtils
         public: true

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Controller;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Psr\Log\LoggerInterface;
@@ -94,7 +93,6 @@ abstract class Controller extends AbstractController
             \RZ\Roadiz\Preview\PreviewResolverInterface::class => PreviewResolverInterface::class,
             RequestStack::class => RequestStack::class,
             Environment::class => Environment::class,
-            'nodesSourcesUrlCacheProvider' => CacheProvider::class,
             'dispatcher' => 'event_dispatcher',
             'event_dispatcher' => 'event_dispatcher',
             NodeChrootResolver::class => NodeChrootResolver::class,
