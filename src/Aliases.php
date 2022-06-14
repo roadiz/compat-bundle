@@ -258,7 +258,6 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\SearchEngine\NodeSourceSearchHandlerInterface::class => \RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandlerInterface::class,
             \RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver::class => \RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver::class,
             \RZ\Roadiz\CoreBundle\Tag\TagFactory::class => \RZ\Roadiz\Utils\Tag\TagFactory::class,
-            \RZ\Roadiz\CoreBundle\Traits\LoginRequestTrait::class => \RZ\Roadiz\CMS\Traits\LoginRequestTrait::class,
             \RZ\Roadiz\CoreBundle\Traits\LoginResetTrait::class => \RZ\Roadiz\CMS\Traits\LoginResetTrait::class,
             \RZ\Roadiz\CoreBundle\Webhook\WebhookDispatcher::class => \RZ\Roadiz\Webhook\WebhookDispatcher::class,
             \RZ\Roadiz\CoreBundle\Xlsx\AbstractXlsxSerializer::class => \RZ\Roadiz\Core\Serializers\AbstractXlsxSerializer::class,
