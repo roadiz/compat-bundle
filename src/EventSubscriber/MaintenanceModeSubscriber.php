@@ -17,9 +17,6 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Security;
 
-/**
- * @package RZ\Roadiz\CoreBundle\Event
- */
 final class MaintenanceModeSubscriber implements EventSubscriberInterface
 {
     private Settings $settings;
@@ -85,14 +82,17 @@ final class MaintenanceModeSubscriber implements EventSubscriberInterface
      * @param RequestEvent $event
      * @throws MaintenanceModeException
      */
-    public function onRequest(RequestEvent $event)
+    public function onRequest(RequestEvent $event): void
     {
         if ($event->isMainRequest()) {
+            if (\in_array($event->getRequest()->get('_route'), $this->getAuthorizedRoutes())) {
+                return;
+            }
+
             $maintenanceMode = (bool) $this->settings->get('maintenance_mode', false);
             if (
                 $maintenanceMode === true &&
-                !$this->security->isGranted('ROLE_BACKEND_USER') &&
-                !in_array($event->getRequest()->get('_route'), $this->getAuthorizedRoutes())
+                !$this->security->isGranted('ROLE_BACKEND_USER')
             ) {
                 $theme = $this->themeResolver->findTheme(null);
                 if (null !== $theme) {
