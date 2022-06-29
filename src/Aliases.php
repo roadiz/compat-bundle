@@ -43,6 +43,7 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\EntityApi\NodeTypeApi::class => \RZ\Roadiz\CMS\Utils\NodeTypeApi::class,
             \RZ\Roadiz\CoreBundle\EntityApi\TagApi::class => \RZ\Roadiz\CMS\Utils\TagApi::class,
             \RZ\Roadiz\CoreBundle\EntityHandler\DocumentHandler::class => \RZ\Roadiz\Core\Handlers\DocumentHandler::class,
+            \RZ\Roadiz\CoreBundle\EntityHandler\FolderHandler::class => \RZ\Roadiz\Core\Handlers\FolderHandler::class,
             \RZ\Roadiz\CoreBundle\EntityHandler\NodeHandler::class => \RZ\Roadiz\Core\Handlers\NodeHandler::class,
             \RZ\Roadiz\CoreBundle\EntityHandler\NodeTypeHandler::class => \RZ\Roadiz\Core\Handlers\NodeTypeHandler::class,
             \RZ\Roadiz\CoreBundle\EntityHandler\NodesSourcesHandler::class => \RZ\Roadiz\Core\Handlers\NodesSourcesHandler::class,
