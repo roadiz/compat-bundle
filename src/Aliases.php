@@ -42,6 +42,7 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\EntityApi\NodeSourceApi::class => \RZ\Roadiz\CMS\Utils\NodeSourceApi::class,
             \RZ\Roadiz\CoreBundle\EntityApi\NodeTypeApi::class => \RZ\Roadiz\CMS\Utils\NodeTypeApi::class,
             \RZ\Roadiz\CoreBundle\EntityApi\TagApi::class => \RZ\Roadiz\CMS\Utils\TagApi::class,
+            \RZ\Roadiz\CoreBundle\EntityHandler\DocumentHandler::class => \RZ\Roadiz\Core\Handlers\DocumentHandler::class,
             \RZ\Roadiz\CoreBundle\EntityHandler\NodeHandler::class => \RZ\Roadiz\Core\Handlers\NodeHandler::class,
             \RZ\Roadiz\CoreBundle\EntityHandler\NodeTypeHandler::class => \RZ\Roadiz\Core\Handlers\NodeTypeHandler::class,
             \RZ\Roadiz\CoreBundle\EntityHandler\NodesSourcesHandler::class => \RZ\Roadiz\Core\Handlers\NodesSourcesHandler::class,
@@ -255,6 +256,7 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\Node\UniqueNodeGenerator::class => \RZ\Roadiz\Utils\Node\UniqueNodeGenerator::class,
             \RZ\Roadiz\CoreBundle\Node\UniversalDataDuplicator::class => \RZ\Roadiz\Utils\Node\UniversalDataDuplicator::class,
             \RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface::class => \RZ\Roadiz\Preview\PreviewResolverInterface::class,
+            \RZ\Roadiz\CoreBundle\Repository\DocumentRepository::class => \RZ\Roadiz\Core\Repositories\DocumentRepository::class,
             \RZ\Roadiz\CoreBundle\Repository\EntityRepository::class => \RZ\Roadiz\Core\Repositories\EntityRepository::class,
             \RZ\Roadiz\CoreBundle\Repository\NodeRepository::class => \RZ\Roadiz\Core\Repositories\NodeRepository::class,
             \RZ\Roadiz\CoreBundle\Repository\TagRepository::class => \RZ\Roadiz\Core\Repositories\TagRepository::class,
@@ -274,6 +276,10 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\Xlsx\SerializerInterface::class => \RZ\Roadiz\Core\Serializers\SerializerInterface::class,
             \RZ\Roadiz\CoreBundle\Xlsx\XlsxExporter::class => \RZ\Roadiz\Utils\XlsxExporter::class,
             \Symfony\Component\HttpKernel\Kernel::class => \RZ\Roadiz\Core\Kernel::class,
+            \RZ\Roadiz\CoreBundle\Document\MediaFinder\SoundcloudEmbedFinder::class => \RZ\Roadiz\Utils\MediaFinders\SoundcloudEmbedFinder::class,
+            \RZ\Roadiz\CoreBundle\Document\MediaFinder\YoutubeEmbedFinder::class => \RZ\Roadiz\Utils\MediaFinders\YoutubeEmbedFinder::class,
+            \RZ\Roadiz\CoreBundle\Document\MediaFinder\VimeoEmbedFinder::class => \RZ\Roadiz\Utils\MediaFinders\VimeoEmbedFinder::class,
+            \RZ\Roadiz\CoreBundle\Document\MediaFinder\DailymotionEmbedFinder::class => \RZ\Roadiz\Utils\MediaFinders\DailymotionEmbedFinder::class,
         ];
     }
 }
