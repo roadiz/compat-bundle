@@ -271,7 +271,6 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\Webhook\WebhookDispatcher::class => \RZ\Roadiz\Webhook\WebhookDispatcher::class,
             \RZ\Roadiz\CoreBundle\Webhook\Exception\TooManyWebhookTriggeredException::class => \RZ\Roadiz\Webhook\Exception\TooManyWebhookTriggeredException::class,
             \RZ\Roadiz\CoreBundle\Xlsx\AbstractXlsxSerializer::class => \RZ\Roadiz\Core\Serializers\AbstractXlsxSerializer::class,
-            \RZ\Roadiz\CoreBundle\Xlsx\AbstractXlsxSerializer::class => \RZ\Roadiz\Core\Serializers\NodeJsonSerializer::class,
             \RZ\Roadiz\CoreBundle\Xlsx\NodeSourceXlsxSerializer::class => \RZ\Roadiz\Core\Serializers\NodeSourceXlsxSerializer::class,
             \RZ\Roadiz\CoreBundle\Xlsx\SerializerInterface::class => \RZ\Roadiz\Core\Serializers\SerializerInterface::class,
             \RZ\Roadiz\CoreBundle\Xlsx\XlsxExporter::class => \RZ\Roadiz\Utils\XlsxExporter::class,

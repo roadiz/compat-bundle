@@ -17,6 +17,7 @@ class LegacyAliasesCompilerPass implements CompilerPassInterface
             if (
                 !(new UnicodeString($className))->containsAny([
                     '\\Entity\\',
+                    '\\Repository\\',
                     '\\DependencyInjection',
                     '\\Doctrine\\Event',
                     '\\Traits',
