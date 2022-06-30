@@ -20,7 +20,6 @@ class RoadizCompatBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new LegacyAliasesCompilerPass());
         $container->addCompilerPass(new ThemesTranslatorPathsCompilerPass());
     }
 }
