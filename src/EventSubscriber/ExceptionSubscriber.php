@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\EventSubscriber;
 
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use RZ\Roadiz\CompatBundle\Controller\AppController;
+use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
 use RZ\Roadiz\CoreBundle\Exception\ExceptionViewer;
 use RZ\Roadiz\CoreBundle\Exception\MaintenanceModeException;
-use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -64,8 +62,10 @@ final class ExceptionSubscriber implements EventSubscriberInterface
 
     /**
      * @param ExceptionEvent $event
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         if ($this->debug) {
             return;
@@ -105,7 +105,6 @@ final class ExceptionSubscriber implements EventSubscriberInterface
             }
             if (null !== $theme = $this->isNotFoundExceptionWithTheme($event)) {
                 $event->setResponse($this->createThemeNotFoundResponse($theme, $exception, $event));
-                return;
             }
         }
     }
@@ -180,17 +179,19 @@ final class ExceptionSubscriber implements EventSubscriberInterface
 
     /**
      * @param Theme $theme
-     * @param \Exception|\TypeError $exception
+     * @param \Throwable $exception
      * @param ExceptionEvent $event
      *
      * @return Response
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \Throwable
+     * @throws \Twig\Error\SyntaxError
      */
-    protected function createThemeNotFoundResponse(Theme $theme, $exception, ExceptionEvent $event): Response
+    protected function createThemeNotFoundResponse(Theme $theme, \Throwable $exception, ExceptionEvent $event): Response
     {
-        /*
-         * Create a new controller for serving
-         * 404 response
-         */
         $ctrlClass = $theme->getClassName();
         $controller = new $ctrlClass();
         $serviceId = get_class($controller);
@@ -200,10 +201,9 @@ final class ExceptionSubscriber implements EventSubscriberInterface
         }
         if ($controller instanceof AppController) {
             $controller->prepareBaseAssignation();
+            return $controller->throw404($exception->getMessage());
         }
 
-        return call_user_func_array([$controller, 'throw404'], [
-            'message' => $exception->getMessage()
-        ]);
+        throw $exception;
     }
 }

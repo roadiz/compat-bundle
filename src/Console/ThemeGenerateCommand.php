@@ -12,17 +12,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Process\Process;
 
 class ThemeGenerateCommand extends Command
 {
     protected string $projectDir;
     protected ThemeGenerator $themeGenerator;
 
-    /**
-     * @param string $projectDir
-     * @param ThemeGenerator $themeGenerator
-     */
     public function __construct(string $projectDir, ThemeGenerator $themeGenerator)
     {
         parent::__construct();
@@ -30,7 +25,7 @@ class ThemeGenerateCommand extends Command
         $this->themeGenerator = $themeGenerator;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('themes:generate')
             ->setDescription('Generate a new theme based on BaseTheme boilerplate. <info>Requires "find", "sed" and "git" commands.</info>')

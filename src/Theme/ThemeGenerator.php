@@ -260,7 +260,13 @@ class ThemeGenerator
     {
         if ($relative) {
             $this->filesystem->mkdir(dirname($targetDir));
-            $originDir = $this->filesystem->makePathRelative($originDir, realpath(dirname($targetDir)));
+            $realTargetParentDir = realpath(dirname($targetDir));
+            if (false === $realTargetParentDir) {
+                throw new IOException(
+                    sprintf('Cannot resolve realpath for "%s" dirname.', $targetDir),
+                );
+            }
+            $originDir = $this->filesystem->makePathRelative($originDir, $realTargetParentDir);
         }
         $this->filesystem->symlink($originDir, $targetDir);
         if (!file_exists($targetDir)) {

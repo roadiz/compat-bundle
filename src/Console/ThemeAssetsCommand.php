@@ -19,10 +19,6 @@ class ThemeAssetsCommand extends Command
     protected string $projectDir;
     protected ThemeGenerator $themeGenerator;
 
-    /**
-     * @param string $projectDir
-     * @param ThemeGenerator $themeGenerator
-     */
     public function __construct(string $projectDir, ThemeGenerator $themeGenerator)
     {
         parent::__construct();
@@ -30,7 +26,7 @@ class ThemeAssetsCommand extends Command
         $this->themeGenerator = $themeGenerator;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('themes:assets:install')
             ->setDescription('Install a theme assets folder in public directory.')

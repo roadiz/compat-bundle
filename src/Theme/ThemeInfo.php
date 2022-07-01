@@ -7,6 +7,8 @@ namespace RZ\Roadiz\CompatBundle\Theme;
 use ReflectionClass;
 use ReflectionException;
 use RuntimeException;
+use RZ\Roadiz\CompatBundle\Controller\AppController;
+use RZ\Roadiz\CoreBundle\Exception\ThemeClassNotValidException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -15,14 +17,17 @@ final class ThemeInfo
 {
     private string $name;
     private string $themeName;
+    /**
+     * @var class-string|null
+     */
     private ?string $classname = null;
     private Filesystem $filesystem;
     private string $projectDir;
     private ?string $themePath = null;
-    private static array $protectedThemeNames = ['DefaultTheme', 'Debug', 'BaseTheme', 'Install', 'Rozier'];
+    private static array $protectedThemeNames = ['Rozier'];
 
     /**
-     * @param string $name Short theme name or FQN classname
+     * @param class-string|string $name Short theme name or FQN classname
      * @param string $projectDir
      */
     public function __construct(string $name, string $projectDir)
@@ -30,7 +35,7 @@ final class ThemeInfo
         $this->filesystem = new Filesystem();
         $this->projectDir = $projectDir;
 
-        if (false !== strpos($name, '\\')) {
+        if (class_exists($name)) {
             /*
              * If name is a FQN classname
              */
@@ -51,7 +56,8 @@ final class ThemeInfo
     /**
      * @param string $themeName
      *
-     * @return class-string|string
+     * @return class-string
+     * @throws ThemeClassNotValidException
      */
     protected function guessClassnameFromThemeName(string $themeName): string
     {
@@ -59,23 +65,25 @@ final class ThemeInfo
             case 'RozierApp':
             case 'RozierTheme':
             case 'Rozier':
-                return '\\Themes\\Rozier\\RozierApp';
-            case 'Install':
-            case 'InstallTheme':
-            case 'InstallApp':
-                return '\\Themes\\Install\InstallApp';
-            case 'Debug':
-                throw new \InvalidArgumentException('Debug is not a real theme.');
-            case 'Default':
-            case 'DefaultTheme':
-                return '\\Themes\\DefaultTheme\\DefaultThemeApp';
+                $className = '\\Themes\\Rozier\\RozierApp';
+                break;
             default:
-                return '\\Themes\\' . $themeName . '\\' . $themeName . 'App';
+                $className = '\\Themes\\' . $themeName . '\\' . $themeName . 'App';
+                break;
+        }
+
+        if (class_exists($className)) {
+            return $className;
+        } else {
+            throw new ThemeClassNotValidException(sprintf(
+                '“%s” theme is not available in your project.',
+                $className
+            ));
         }
     }
 
     /**
-     * @param string $classname
+     * @param class-string $classname
      *
      * @return string
      */
@@ -87,13 +95,17 @@ final class ThemeInfo
     }
 
     /**
-     * @param string $classname
-     * @return string
+     * @param class-string $classname
+     * @return class-string
      */
     protected function validateClassname(string $classname): string
     {
         if (null !== $reflection = $this->getThemeReflectionClass($classname)) {
-            return call_user_func([$reflection->getName(), 'getThemeMainClass']);
+            /** @var class-string<AppController> $class */
+            $class = $reflection->getName();
+            if (method_exists($class, 'getThemeMainClass')) {
+                return $class::getThemeMainClass();
+            }
         }
         throw new RuntimeException('Theme class ' . $classname . ' does not exist.');
     }
@@ -126,8 +138,7 @@ final class ThemeInfo
         }
         if (
             $this->filesystem->exists($this->getThemePath()) ||
-            $this->filesystem->exists($this->projectDir . '/vendor/roadiz/' . $this->getThemeName()) ||
-            $this->filesystem->exists($this->projectDir . '/vendor/roadiz/roadiz/themes/' . $this->getThemeName())
+            $this->filesystem->exists($this->projectDir . '/vendor/roadiz/' . $this->getThemeName())
         ) {
             return true;
         }
@@ -137,8 +148,8 @@ final class ThemeInfo
 
     protected function getProtectedThemePath(): string
     {
-        if ($this->filesystem->exists($this->projectDir . '/vendor/roadiz/roadiz/themes/' . $this->getThemeName())) {
-            return $this->projectDir . '/vendor/roadiz/roadiz/themes/' . $this->getThemeName();
+        if ($this->filesystem->exists($this->projectDir . '/vendor/roadiz/' . $this->getThemeName())) {
+            return $this->projectDir . '/vendor/roadiz/' . $this->getThemeName();
         } elseif ($this->filesystem->exists($this->projectDir . '/themes/' . $this->getThemeName())) {
             return $this->projectDir . '/themes/' . $this->getThemeName();
         }
@@ -158,7 +169,10 @@ final class ThemeInfo
             if ($this->isProtected()) {
                 $this->themePath = $this->getProtectedThemePath();
             } elseif ($this->isValid()) {
-                $this->themePath = call_user_func([$this->getClassname(), 'getThemeFolder']);
+                $className = $this->getClassname();
+                if (method_exists($className, 'getThemeFolder')) {
+                    $this->themePath = $className::getThemeFolder();
+                }
             } else {
                 $this->themePath = $this->projectDir . '/themes/' . $this->getThemeName();
             }
@@ -167,7 +181,7 @@ final class ThemeInfo
     }
 
     /**
-     * @param string|null $className
+     * @param class-string|null $className
      *
      * @return null|ReflectionClass
      */
@@ -217,7 +231,7 @@ final class ThemeInfo
     }
 
     /**
-     * @return string Theme class FQN
+     * @return class-string Theme class FQN
      */
     public function getClassname(): string
     {

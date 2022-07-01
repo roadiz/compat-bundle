@@ -6,9 +6,9 @@ namespace RZ\Roadiz\CompatBundle\Controller;
 
 use Exception;
 use InvalidArgumentException;
-use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
+use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
 use RZ\Roadiz\Core\Handlers\HandlerFactoryInterface;
 use RZ\Roadiz\Core\Models\FileAwareInterface;
@@ -17,12 +17,10 @@ use RZ\Roadiz\CoreBundle\Entity\NodesSources;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
 use RZ\Roadiz\CoreBundle\Entity\User;
 use RZ\Roadiz\CoreBundle\EntityHandler\NodeHandler;
-use RZ\Roadiz\CoreBundle\Preview\PreviewResolverInterface;
+use RZ\Roadiz\CoreBundle\Exception\ThemeClassNotValidException;
 use RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver;
-use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\Utils\Asset\Packages;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Loader\YamlFileLoader;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -39,7 +38,6 @@ use Symfony\Component\Validator\ConstraintViolation;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use Twig\Loader\FilesystemLoader;
 
 /**
  * Base class for Roadiz themes.
@@ -203,15 +201,23 @@ abstract class AppController extends Controller
     public static function getThemeFolder(): string
     {
         $class_info = new ReflectionClass(static::getThemeMainClass());
-        return dirname($class_info->getFileName());
+        if (false === $themeFilename = $class_info->getFileName()) {
+            throw new ThemeClassNotValidException('Theme class file is not valid or does not exist');
+        }
+        return dirname($themeFilename);
     }
 
     /**
      * @return class-string Main theme class (FQN class with namespace)
+     * @throws ThemeClassNotValidException
      */
     public static function getThemeMainClass(): string
     {
-        return '\\Themes\\' . static::getThemeDir() . '\\' . static::getThemeMainClassName();
+        $mainClassName = '\\Themes\\' . static::getThemeDir() . '\\' . static::getThemeMainClassName();
+        if (!class_exists($mainClassName)) {
+            throw new ThemeClassNotValidException(sprintf('%s class does not exist', $mainClassName));
+        }
+        return $mainClassName;
     }
 
     /**
@@ -267,39 +273,6 @@ abstract class AppController extends Controller
     }
 
     /**
-     * Append objects to the global dependency injection container.
-     *
-     * @param ContainerInterface $container
-     *
-     * @deprecated
-     */
-    public static function setupDependencyInjection(ContainerInterface $container)
-    {
-        // Do nothing
-    }
-
-    /**
-     * @param ContainerInterface $container
-     *
-     * @throws ReflectionException
-     * @throws LoaderError
-     *
-     * @deprecated
-     */
-    public static function addThemeTemplatesPath(ContainerInterface $container)
-    {
-        /** @var FilesystemLoader $loader */
-        $loader = $container->get('twig.loader.native_filesystem');
-        /*
-         * Enable theme templates in main namespace and in its own theme namespace.
-         */
-        $loader->prependPath(static::getViewsFolder());
-        // Add path into a namespaced loader to enable using same template name
-        // over different static themes.
-        $loader->prependPath(static::getViewsFolder(), static::getThemeDir());
-    }
-
-    /**
      * @return string
      * @throws ReflectionException
      */
@@ -351,7 +324,10 @@ abstract class AppController extends Controller
      */
     public function prepareBaseAssignation()
     {
+        /** @var KernelInterface $kernel */
         $kernel = $this->get('kernel');
+        /** @var FileAwareInterface $fileAware */
+        $fileAware = $this->get(FileAwareInterface::class);
         $this->assignation = [
             'head' => [
                 'ajax' => $this->getRequest()->isXmlHttpRequest(),
@@ -361,7 +337,7 @@ abstract class AppController extends Controller
                 'universalAnalyticsId' => $this->getSettingsBag()->get('universal_analytics_id'),
                 'googleTagManagerId' => $this->getSettingsBag()->get('google_tag_manager_id'),
                 'baseUrl' => $this->getRequest()->getSchemeAndHttpHost() . $this->getRequest()->getBasePath(),
-                'filesUrl' => $this->getRequest()->getBaseUrl() . $this->get(FileAwareInterface::class)->getPublicFilesBasePath(),
+                'filesUrl' => $this->getRequest()->getBaseUrl() . $fileAware->getPublicFilesBasePath(),
                 'resourcesUrl' => $this->getStaticResourcesUrl(),
                 'absoluteResourcesUrl' => $this->getAbsoluteStaticResourceUrl(),
             ]
@@ -376,7 +352,7 @@ abstract class AppController extends Controller
      */
     public function getStaticResourcesUrl(): string
     {
-        return $this->get('assetPackages')->getUrl('themes/' . static::$themeDir . '/static/');
+        return $this->getPackages()->getUrl('themes/' . static::$themeDir . '/static/');
     }
 
     /**
@@ -385,7 +361,7 @@ abstract class AppController extends Controller
      */
     public function getAbsoluteStaticResourceUrl(): string
     {
-        return $this->get('assetPackages')->getUrl('themes/' . static::$themeDir . '/static/', Packages::ABSOLUTE);
+        return $this->getPackages()->getUrl('themes/' . static::$themeDir . '/static/', Packages::ABSOLUTE);
     }
 
     /**
@@ -398,17 +374,13 @@ abstract class AppController extends Controller
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function throw404($message = "")
+    public function throw404($message = '')
     {
-        /** @var LoggerInterface $logger */
-        $logger = $this->get('logger');
-        $logger->warning($message);
-
         $this->assignation['nodeName'] = 'error-404';
         $this->assignation['nodeTypeName'] = 'error404';
         $this->assignation['errorMessage'] = $message;
-        $this->assignation['title'] = $this->get('translator')->trans('error404.title');
-        $this->assignation['content'] = $this->get('translator')->trans('error404.message');
+        $this->assignation['title'] = $this->getTranslator()->trans('error404.title');
+        $this->assignation['content'] = $this->getTranslator()->trans('error404.message');
 
         return new Response(
             $this->getTwig()->render('404.html.twig', $this->assignation),
@@ -424,7 +396,8 @@ abstract class AppController extends Controller
      */
     public function getTheme(): ?Theme
     {
-        $this->get('stopwatch')->start('getTheme');
+        $this->getStopwatch()->start('getTheme');
+        /** @var ThemeResolverInterface $themeResolver */
         $themeResolver = $this->get(ThemeResolverInterface::class);
         if (null === $this->theme) {
             $className = new UnicodeString(static::getCalledClass());
@@ -438,7 +411,7 @@ abstract class AppController extends Controller
             }
             $this->theme = $themeResolver->findThemeByClass($className->toString());
         }
-        $this->get('stopwatch')->stop('getTheme');
+        $this->getStopwatch()->stop('getTheme');
         return $this->theme;
     }
 
@@ -471,16 +444,16 @@ abstract class AppController extends Controller
         ?NodesSources $source = null
     ): void {
         $session = $this->getSession();
-        if (null !== $session && $session instanceof Session) {
+        if ($session instanceof Session) {
             $session->getFlashBag()->add($level, $msg);
         }
 
         switch ($level) {
             case 'error':
-                $this->get('logger')->error($msg, ['source' => $source]);
+                $this->getLogger()->error($msg, ['source' => $source]);
                 break;
             default:
-                $this->get('logger')->info($msg, ['source' => $source]);
+                $this->getLogger()->info($msg, ['source' => $source]);
                 break;
         }
     }
@@ -503,6 +476,7 @@ abstract class AppController extends Controller
      * @param Request $request
      * @param string $msg
      * @param NodesSources|null $source
+     * @return void
      */
     public function publishErrorMessage(Request $request, string $msg, NodesSources $source = null)
     {
@@ -517,6 +491,7 @@ abstract class AppController extends Controller
      * @param mixed $attributes
      * @param int|null $nodeId
      * @param bool|false $includeChroot
+     * @return void
      *
      * @throws AccessDeniedException
      */
@@ -536,13 +511,13 @@ abstract class AppController extends Controller
         }
 
         /** @var Node|null $node */
-        $node = $this->get('em')->find(Node::class, (int) $nodeId);
+        $node = $this->em()->find(Node::class, (int) $nodeId);
 
         if (null !== $node) {
-            $this->get('em')->refresh($node);
+            $this->em()->refresh($node);
 
             /** @var NodeHandler $nodeHandler */
-            $nodeHandler = $this->get(HandlerFactoryInterface::class)->getHandler($node);
+            $nodeHandler = $this->getHandlerFactory()->getHandler($node);
             $parents = $nodeHandler->getParents();
 
             if ($includeChroot) {
@@ -610,11 +585,9 @@ abstract class AppController extends Controller
         /** @var RequestStack $requestStack */
         $requestStack = $this->get(RequestStack::class);
         $settings = $this->getSettingsBag();
-        /** @var PreviewResolverInterface $previewResolver */
-        $previewResolver = $this->get(PreviewResolverInterface::class);
 
         if (
-            !$previewResolver->isPreview() &&
+            !$this->getPreviewResolver()->isPreview() &&
             !$kernel->isDebug() &&
             $requestStack->getMainRequest() === $request &&
             $request->isMethodCacheable() &&
@@ -671,16 +644,16 @@ abstract class AppController extends Controller
      */
     protected function getHome(?TranslationInterface $translation = null): ?Node
     {
-        $this->get('stopwatch')->start('getHome');
+        $this->getStopwatch()->start('getHome');
         if (null === $this->homeNode) {
-            $nodeRepository = $this->get('em')->getRepository(Node::class);
+            $nodeRepository = $this->em()->getRepository(Node::class);
             if ($translation !== null) {
                 $this->homeNode = $nodeRepository->findHomeWithTranslation($translation);
             } else {
                 $this->homeNode = $nodeRepository->findHomeWithDefaultTranslation();
             }
         }
-        $this->get('stopwatch')->stop('getHome');
+        $this->getStopwatch()->stop('getHome');
 
         return $this->homeNode;
     }

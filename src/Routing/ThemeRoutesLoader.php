@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Routing;
 
+use RZ\Roadiz\CompatBundle\Controller\AppController;
 use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Routing\RouteCollection;
@@ -33,6 +34,7 @@ final class ThemeRoutesLoader extends Loader
         $routeCollection = new RouteCollection();
         $frontendThemes = $this->themeResolver->getFrontendThemes();
         foreach ($frontendThemes as $theme) {
+            /** @var class-string<AppController> $feClass */
             $feClass = $theme->getClassName();
             /** @var RouteCollection $feCollection */
             $feCollection = call_user_func([$feClass, 'getRoutes']);

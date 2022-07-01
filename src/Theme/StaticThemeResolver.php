@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Theme;
 
+use RZ\Roadiz\CompatBundle\Controller\AppController;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
 use Symfony\Component\Stopwatch\Stopwatch;
 
@@ -126,7 +127,9 @@ class StaticThemeResolver implements ThemeResolverInterface
      */
     public static function compareThemePriority(Theme $themeA, Theme $themeB): int
     {
+        /** @var class-string<AppController> $classA */
         $classA = $themeA->getClassName();
+        /** @var class-string<AppController> $classB */
         $classB = $themeB->getClassName();
 
         if (call_user_func([$classA, 'getPriority']) === call_user_func([$classB, 'getPriority'])) {

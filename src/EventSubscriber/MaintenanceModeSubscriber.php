@@ -118,12 +118,20 @@ final class MaintenanceModeSubscriber implements EventSubscriberInterface
         if ($this->serviceLocator->has($serviceId)) {
             $controller = $this->serviceLocator->get($serviceId);
         }
-        if ($controller instanceof AppController) {
-            $controller->prepareBaseAssignation();
+
+        if (!$controller instanceof AbstractController) {
+            throw new \RuntimeException(sprintf(
+                'Theme controller %s must extend %s class',
+                $ctrlClass,
+                AbstractController::class
+            ));
         }
 
-        // No node controller matching in install mode
-        $request->attributes->set('theme', $controller->getTheme());
+        if ($controller instanceof AppController) {
+            $controller->prepareBaseAssignation();
+            // No node controller matching in install mode
+            $request->attributes->set('theme', $controller->getTheme());
+        }
 
         /*
          * Set request locale if _locale param

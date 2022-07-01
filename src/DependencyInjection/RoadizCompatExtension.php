@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\DependencyInjection;
 
+use RZ\Roadiz\CompatBundle\Controller\AppController;
 use RZ\Roadiz\CompatBundle\Theme\StaticThemeResolver;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
 use RZ\Roadiz\CoreBundle\Entity\Translation;
@@ -22,7 +23,7 @@ class RoadizCompatExtension extends Extension
     /**
      * @inheritDoc
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(dirname(__DIR__) . '/../config'));
         $loader->load('services.yaml');
@@ -51,7 +52,7 @@ class RoadizCompatExtension extends Extension
         foreach ($config['themes'] as $index => $themeConfig) {
             $themeSlug = (new AsciiSlugger())->slug($themeConfig['classname'], '_');
             $serviceId = 'roadiz_compat.themes.' . $themeSlug;
-            /** @var class-string $className */
+            /** @var class-string<AppController> $className */
             $className = $themeConfig['classname'];
             $themeDir = $className::getThemeDir();
             $container->setDefinition(

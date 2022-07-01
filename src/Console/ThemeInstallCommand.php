@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace RZ\Roadiz\CompatBundle\Console;
 
 use Doctrine\Persistence\ManagerRegistry;
+use RZ\Roadiz\CompatBundle\Theme\ThemeGenerator;
+use RZ\Roadiz\CompatBundle\Theme\ThemeInfo;
 use RZ\Roadiz\CoreBundle\Exception\EntityAlreadyExistsException;
 use RZ\Roadiz\CoreBundle\Importer\AttributeImporter;
 use RZ\Roadiz\CoreBundle\Importer\EntityImporterInterface;
@@ -13,8 +15,6 @@ use RZ\Roadiz\CoreBundle\Importer\NodeTypesImporter;
 use RZ\Roadiz\CoreBundle\Importer\RolesImporter;
 use RZ\Roadiz\CoreBundle\Importer\SettingsImporter;
 use RZ\Roadiz\CoreBundle\Importer\TagsImporter;
-use RZ\Roadiz\CompatBundle\Theme\ThemeGenerator;
-use RZ\Roadiz\CompatBundle\Theme\ThemeInfo;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -43,17 +43,6 @@ class ThemeInstallCommand extends Command
     protected AttributeImporter $attributeImporter;
     protected ManagerRegistry $managerRegistry;
 
-    /**
-     * @param string $projectDir
-     * @param ManagerRegistry $managerRegistry
-     * @param ThemeGenerator $themeGenerator
-     * @param NodeTypesImporter $nodeTypesImporter
-     * @param TagsImporter $tagsImporter
-     * @param SettingsImporter $settingsImporter
-     * @param RolesImporter $rolesImporter
-     * @param GroupsImporter $groupsImporter
-     * @param AttributeImporter $attributeImporter
-     */
     public function __construct(
         string $projectDir,
         ManagerRegistry $managerRegistry,
@@ -77,7 +66,7 @@ class ThemeInstallCommand extends Command
         $this->managerRegistry = $managerRegistry;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('themes:install')
             ->setDescription('Manage themes installation')
@@ -113,7 +102,7 @@ class ThemeInstallCommand extends Command
          */
         if ((new UnicodeString($input->getArgument('classname')))->endsWith('config.yml')) {
             $classname = realpath($input->getArgument('classname'));
-            if (file_exists($classname)) {
+            if (false !== $classname && file_exists($classname)) {
                 $this->io->note('Install assets directly from file: ' . $classname);
                 $themeConfigPath = $classname;
             } else {
@@ -152,7 +141,7 @@ class ThemeInstallCommand extends Command
         return 0;
     }
 
-    protected function importThemeData(?ThemeInfo $themeInfo, string $themeConfigPath)
+    protected function importThemeData(?ThemeInfo $themeInfo, string $themeConfigPath): void
     {
         $data = $this->getThemeConfig($themeConfigPath);
 
@@ -209,12 +198,17 @@ class ThemeInstallCommand extends Command
     {
         if (null !== $themeInfo) {
             $file = new File($themeInfo->getThemePath() . "/" . $filename);
+        } elseif (false !== $realFilename = realpath($filename)) {
+            $file = new File($realFilename);
         } else {
-            $file = new File(realpath($filename));
+            throw new \RuntimeException($filename . ' is not a valid file');
         }
         if (!$this->dryRun) {
             try {
-                $importer->import(file_get_contents($file->getPathname()));
+                if (false === $fileContent = file_get_contents($file->getPathname())) {
+                    throw new \RuntimeException($file->getPathname() . ' file is not readable');
+                }
+                $importer->import($fileContent);
                 $this->managerRegistry->getManager()->flush();
                 $this->io->writeln(
                     '* <info>' . $file->getPathname() . '</info> file has been imported.'
@@ -233,10 +227,14 @@ class ThemeInstallCommand extends Command
     }
 
     /**
+     * @param string $themeConfigPath
      * @return array
      */
-    protected function getThemeConfig(string $themeConfigPath)
+    protected function getThemeConfig(string $themeConfigPath): array
     {
-        return Yaml::parse(file_get_contents($themeConfigPath));
+        if (false === $fileContent = file_get_contents($themeConfigPath)) {
+            throw new \RuntimeException($themeConfigPath . ' file is not readable');
+        }
+        return Yaml::parse($fileContent);
     }
 }

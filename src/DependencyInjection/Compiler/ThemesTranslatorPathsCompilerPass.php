@@ -14,7 +14,7 @@ class ThemesTranslatorPathsCompilerPass implements CompilerPassInterface
     /**
      * @inheritDoc
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if ($container->hasDefinition('translator.default')) {
             $this->registerThemeTranslatorResources($container);
@@ -23,6 +23,7 @@ class ThemesTranslatorPathsCompilerPass implements CompilerPassInterface
 
     private function registerThemeTranslatorResources(ContainerBuilder $container): void
     {
+        /** @var string $projectDir */
         $projectDir = $container->getParameter('kernel.project_dir');
         /** @var \Iterator|array $themesConfig */
         $themesConfig = $container->getParameter('roadiz_compat.themes');

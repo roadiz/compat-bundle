@@ -20,9 +20,6 @@ class ThemesListCommand extends Command
     protected Filesystem $filesystem;
     protected ThemeResolverInterface $themeResolver;
 
-    /**
-     * @param ThemeResolverInterface $themeResolver
-     */
     public function __construct(ThemeResolverInterface $themeResolver)
     {
         parent::__construct();
@@ -31,7 +28,7 @@ class ThemesListCommand extends Command
     }
 
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('themes:list')
             ->setDescription('Installed themes')

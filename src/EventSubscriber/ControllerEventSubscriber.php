@@ -21,7 +21,7 @@ final class ControllerEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelController(ControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
         $controller = $event->getController();
 

@@ -28,7 +28,7 @@ final class ThemeAwareNodeRouter implements RouterInterface, RequestMatcherInter
         $this->innerRouter = $innerRouter;
     }
 
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->innerRouter->setContext($context);
     }

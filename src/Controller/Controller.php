@@ -37,6 +37,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,6 +53,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
@@ -61,47 +63,43 @@ abstract class Controller extends AbstractController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            'securityAuthenticationUtils' => AuthenticationUtils::class,
-            NodeSourceSearchHandlerInterface::class => NodeSourceSearchHandlerInterface::class,
-            \RZ\Roadiz\Core\SearchEngine\NodeSourceSearchHandlerInterface::class => NodeSourceSearchHandlerInterface::class,
-            'defaultTranslation' => 'defaultTranslation',
-            'em' => EntityManagerInterface::class,
-            'stopwatch' => Stopwatch::class,
-            'requestStack' => RequestStack::class,
-            'translator' => TranslatorInterface::class,
-            'nodeApi' => NodeApi::class,
-            'nodeSourceApi' => NodeSourceApi::class,
-            Stopwatch::class => Stopwatch::class,
-            'securityTokenStorage' => TokenStorageInterface::class,
-            TokenStorageInterface::class => TokenStorageInterface::class,
-            ContactFormManager::class => ContactFormManager::class,
-            'urlGenerator' => UrlGeneratorInterface::class,
-            EmailManager::class => EmailManager::class,
-            'logger' => LoggerInterface::class,
-            'kernel' => KernelInterface::class,
-            'settingsBag' => Settings::class,
-            Settings::class => Settings::class,
-            'nodeTypesBag' => NodeTypes::class,
-            'rolesBag' => Roles::class,
             'assetPackages' => Packages::class,
             'csrfTokenManager' => CsrfTokenManagerInterface::class,
-            OAuth2LinkGenerator::class => OAuth2LinkGenerator::class,
-            FileAwareInterface::class => FileAwareInterface::class,
-            RandomImageFinder::class => RandomImageFinder::class,
-            PreviewResolverInterface::class => PreviewResolverInterface::class,
-            \RZ\Roadiz\Preview\PreviewResolverInterface::class => PreviewResolverInterface::class,
-            RequestStack::class => RequestStack::class,
-            Environment::class => Environment::class,
+            'defaultTranslation' => 'defaultTranslation',
             'dispatcher' => 'event_dispatcher',
+            'em' => EntityManagerInterface::class,
             'event_dispatcher' => 'event_dispatcher',
-            NodeChrootResolver::class => NodeChrootResolver::class,
-            \RZ\Roadiz\Core\Authorization\Chroot\NodeChrootResolver::class => NodeChrootResolver::class,
-            TranslatorInterface::class => TranslatorInterface::class,
-            RendererInterface::class => RendererInterface::class,
+            'kernel' => KernelInterface::class,
+            'logger' => LoggerInterface::class,
+            'nodeApi' => NodeApi::class,
+            'nodeSourceApi' => NodeSourceApi::class,
+            'nodeTypesBag' => NodeTypes::class,
+            'requestStack' => RequestStack::class,
+            'rolesBag' => Roles::class,
+            'securityAuthenticationUtils' => AuthenticationUtils::class,
+            'securityTokenStorage' => TokenStorageInterface::class,
+            'settingsBag' => Settings::class,
+            'stopwatch' => Stopwatch::class,
+            'translator' => TranslatorInterface::class,
+            'urlGenerator' => UrlGeneratorInterface::class,
+            ContactFormManager::class => ContactFormManager::class,
             DocumentUrlGeneratorInterface::class => DocumentUrlGeneratorInterface::class,
+            EmailManager::class => EmailManager::class,
+            Environment::class => Environment::class,
+            FileAwareInterface::class => FileAwareInterface::class,
+            NodeChrootResolver::class => NodeChrootResolver::class,
             NodeFactory::class => NodeFactory::class,
-            \RZ\Roadiz\Utils\Node\NodeFactory::class => NodeFactory::class,
             NodeIndexer::class => NodeIndexer::class,
+            NodeSourceSearchHandlerInterface::class => NodeSourceSearchHandlerInterface::class,
+            OAuth2LinkGenerator::class => OAuth2LinkGenerator::class,
+            PreviewResolverInterface::class => PreviewResolverInterface::class,
+            RandomImageFinder::class => RandomImageFinder::class,
+            RendererInterface::class => RendererInterface::class,
+            RequestStack::class => RequestStack::class,
+            Settings::class => Settings::class,
+            Stopwatch::class => Stopwatch::class,
+            TokenStorageInterface::class => TokenStorageInterface::class,
+            TranslatorInterface::class => TranslatorInterface::class,
             \RZ\Roadiz\Core\Handlers\HandlerFactoryInterface::class => HandlerFactoryInterface::class,
         ]);
     }
@@ -111,7 +109,7 @@ abstract class Controller extends AbstractController
      *
      * @return Request|null
      */
-    public function getRequest()
+    protected function getRequest(): ?Request
     {
         /** @var RequestStack $requestStack */
         $requestStack = $this->get('request_stack');
@@ -121,9 +119,11 @@ abstract class Controller extends AbstractController
     /**
      * @return Security
      */
-    public function getAuthorizationChecker(): Security
+    protected function getAuthorizationChecker(): Security
     {
-        return $this->get(Security::class);
+        /** @var Security $security */ # php-stan hint
+        $security = $this->get(Security::class);
+        return $security;
     }
 
     /**
@@ -131,9 +131,11 @@ abstract class Controller extends AbstractController
      *
      * @return TokenStorageInterface
      */
-    public function getTokenStorage()
+    protected function getTokenStorage(): TokenStorageInterface
     {
-        return $this->get(TokenStorageInterface::class);
+        /** @var TokenStorageInterface $tokenStorage */ # php-stan hint
+        $tokenStorage = $this->get(TokenStorageInterface::class);
+        return $tokenStorage;
     }
 
     /**
@@ -141,7 +143,7 @@ abstract class Controller extends AbstractController
      *
      * @return ObjectManager
      */
-    public function em()
+    protected function em(): ObjectManager
     {
         return $this->getDoctrine()->getManager();
     }
@@ -149,17 +151,35 @@ abstract class Controller extends AbstractController
     /**
      * @return TranslatorInterface
      */
-    public function getTranslator(): TranslatorInterface
+    protected function getTranslator(): TranslatorInterface
     {
-        return $this->get(TranslatorInterface::class);
+        /** @var TranslatorInterface $translator */ # php-stan hint
+        $translator = $this->get(TranslatorInterface::class);
+        return $translator;
     }
 
     /**
      * @return Environment
      */
-    public function getTwig(): Environment
+    protected function getTwig(): Environment
     {
-        return $this->get(Environment::class);
+        /** @var Environment $twig */ # php-stan hint
+        $twig = $this->get(Environment::class);
+        return $twig;
+    }
+
+    protected function getStopwatch(): Stopwatch
+    {
+        /** @var Stopwatch $stopwatch */
+        $stopwatch = $this->get(Stopwatch::class);
+        return $stopwatch;
+    }
+
+    protected function getPreviewResolver(): PreviewResolverInterface
+    {
+        /** @var PreviewResolverInterface $previewResolver */
+        $previewResolver = $this->get(PreviewResolverInterface::class);
+        return $previewResolver;
     }
 
     /**
@@ -168,12 +188,37 @@ abstract class Controller extends AbstractController
      */
     protected function dispatchEvent($event)
     {
-        return $this->get('event_dispatcher')->dispatch($event);
+        /** @var EventDispatcherInterface $eventDispatcher */ # php-stan hint
+        $eventDispatcher = $this->get('event_dispatcher');
+        return $eventDispatcher->dispatch($event);
     }
 
-    public function getSettingsBag(): Settings
+    protected function getSettingsBag(): Settings
     {
-        return $this->get(Settings::class);
+        /** @var Settings $settingsBag */ # php-stan hint
+        $settingsBag = $this->get(Settings::class);
+        return $settingsBag;
+    }
+
+    protected function getPackages(): Packages
+    {
+        /** @var Packages $packages */ # php-stan hint
+        $packages = $this->get('assetPackages');
+        return $packages;
+    }
+
+    protected function getHandlerFactory(): HandlerFactoryInterface
+    {
+        /** @var HandlerFactoryInterface $handlerFactory */ # php-stan hint
+        $handlerFactory = $this->get(HandlerFactoryInterface::class);
+        return $handlerFactory;
+    }
+
+    protected function getLogger(): LoggerInterface
+    {
+        /** @var LoggerInterface $logger */ # php-stan hint
+        $logger = $this->get(LoggerInterface::class);
+        return $logger;
     }
 
     /**
@@ -184,10 +229,12 @@ abstract class Controller extends AbstractController
      * @param int $referenceType
      * @return string
      */
-    public function generateUrl($route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
+    protected function generateUrl($route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
     {
         if ($route instanceof NodesSources) {
-            return $this->get('urlGenerator')->generate(
+            /** @var UrlGeneratorInterface $urlGenerator */
+            $urlGenerator = $this->get('urlGenerator');
+            return $urlGenerator->generate(
                 RouteObjectInterface::OBJECT_BASED_ROUTE_NAME,
                 array_merge($parameters, [RouteObjectInterface::ROUTE_OBJECT => $route]),
                 $referenceType
@@ -215,6 +262,7 @@ abstract class Controller extends AbstractController
      * @param string $role
      * @deprecated Use denyAccessUnlessGranted() method instead
      * @throws AccessDeniedException
+     * @return void
      */
     public function validateAccessForRole($role)
     {
@@ -275,7 +323,7 @@ abstract class Controller extends AbstractController
         /** @var TranslationRepository $repository */
         $repository = $this->getDoctrine()->getRepository(Translation::class);
 
-        if ($this->get(PreviewResolverInterface::class)->isPreview()) {
+        if ($this->getPreviewResolver()->isPreview()) {
             $translation = $repository->findOneByLocaleOrOverrideLocale($_locale);
         } else {
             $translation = $repository->findOneAvailableByLocaleOrOverrideLocale($_locale);
@@ -343,6 +391,7 @@ abstract class Controller extends AbstractController
      *
      * @param Request $request
      * @param array $acceptableFormats
+     * @return void
      */
     protected function denyResourceExceptForFormats(Request $request, array $acceptableFormats = ['html'])
     {
@@ -365,7 +414,9 @@ abstract class Controller extends AbstractController
      */
     protected function createNamedFormBuilder(string $name = 'form', $data = null, array $options = [])
     {
-        return $this->get('form.factory')->createNamedBuilder($name, FormType::class, $data, $options);
+        /** @var FormFactoryInterface $formFactory */
+        $formFactory = $this->get('form.factory');
+        return $formFactory->createNamedBuilder($name, FormType::class, $data, $options);
     }
 
     /**
@@ -394,9 +445,11 @@ abstract class Controller extends AbstractController
      *
      * @return ContactFormManager
      */
-    public function createContactFormManager()
+    public function createContactFormManager(): ContactFormManager
     {
-        return $this->get(ContactFormManager::class);
+        /** @var ContactFormManager $contactFormManager */ # php-stan hinting
+        $contactFormManager = $this->get(ContactFormManager::class);
+        return $contactFormManager;
     }
 
     /**
@@ -404,9 +457,11 @@ abstract class Controller extends AbstractController
      *
      * @return EmailManager
      */
-    public function createEmailManager()
+    public function createEmailManager(): EmailManager
     {
-        return $this->get(EmailManager::class);
+        /** @var EmailManager $emailManager */ # php-stan hinting
+        $emailManager = $this->get(EmailManager::class);
+        return $emailManager;
     }
 
     /**

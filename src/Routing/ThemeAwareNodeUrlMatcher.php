@@ -41,7 +41,7 @@ final class ThemeAwareNodeUrlMatcher implements UrlMatcherInterface, RequestMatc
         );
     }
 
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->innerMatcher->setContext($context);
     }

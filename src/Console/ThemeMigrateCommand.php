@@ -26,7 +26,7 @@ class ThemeMigrateCommand extends Command
         $this->projectDir = $projectDir;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('themes:migrate')
             ->setDescription('Update your site against theme import files, regenerate NSEntities, update database schema and clear caches.')
