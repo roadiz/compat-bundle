@@ -43,11 +43,13 @@ class StaticThemeResolver implements ThemeResolverInterface
     }
 
     /**
-     * @return string
+     * @return class-string
      */
     public function getBackendClassName(): string
     {
-        return '\\Themes\\Rozier\\RozierApp';
+        /** @var class-string $className */ # php-stan hint
+        $className = '\\Themes\\Rozier\\RozierApp';
+        return $className;
     }
 
     /**

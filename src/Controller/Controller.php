@@ -18,6 +18,7 @@ use RZ\Roadiz\CoreBundle\Entity\Translation;
 use RZ\Roadiz\CoreBundle\EntityApi\NodeApi;
 use RZ\Roadiz\CoreBundle\EntityApi\NodeSourceApi;
 use RZ\Roadiz\CoreBundle\Exception\NoTranslationAvailableException;
+use RZ\Roadiz\CoreBundle\Form\Error\FormErrorSerializer;
 use RZ\Roadiz\CoreBundle\ListManager\EntityListManager;
 use RZ\Roadiz\CoreBundle\ListManager\EntityListManagerInterface;
 use RZ\Roadiz\CoreBundle\Mailer\ContactFormManager;
@@ -43,6 +44,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -100,20 +102,23 @@ abstract class Controller extends AbstractController
             Stopwatch::class => Stopwatch::class,
             TokenStorageInterface::class => TokenStorageInterface::class,
             TranslatorInterface::class => TranslatorInterface::class,
+            FormErrorSerializer::class => FormErrorSerializer::class,
             \RZ\Roadiz\Core\Handlers\HandlerFactoryInterface::class => HandlerFactoryInterface::class,
         ]);
     }
 
     /**
-     * Get current request.
-     *
-     * @return Request|null
+     * @return Request
      */
-    protected function getRequest(): ?Request
+    protected function getRequest(): Request
     {
         /** @var RequestStack $requestStack */
         $requestStack = $this->get('request_stack');
-        return $requestStack->getCurrentRequest();
+        $request = $requestStack->getCurrentRequest();
+        if (null === $request) {
+            throw new BadRequestHttpException('Request is not available in this context');
+        }
+        return $request;
     }
 
     /**
@@ -318,7 +323,11 @@ abstract class Controller extends AbstractController
     protected function findTranslationForLocale(string $_locale = null): TranslationInterface
     {
         if (null === $_locale) {
-            return $this->getDoctrine()->getRepository(Translation::class)->findDefault();
+            $defaultTranslation = $this->getDoctrine()->getRepository(Translation::class)->findDefault();
+            if (null === $defaultTranslation) {
+                throw new NoTranslationAvailableException();
+            }
+            return $defaultTranslation;
         }
         /** @var TranslationRepository $repository */
         $repository = $this->getDoctrine()->getRepository(Translation::class);
