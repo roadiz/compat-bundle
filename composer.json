@@ -20,7 +20,7 @@
     "require": {
         "php": ">=7.4",
         "symfony/framework-bundle": "5.4.*",
-        "roadiz/core-bundle": "~2.0.0 || dev-main",
+        "roadiz/core-bundle": "~2.0.0 || dev-develop",
         "roadiz/openid": "~2.0.0",
         "pimple/pimple": "*"
     },

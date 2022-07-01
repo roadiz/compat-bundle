@@ -2,7 +2,7 @@
 
 ### Features
 
-* added aliases for UserJoinedGroupEvent and UserLeavedGroupEvent ([b19d7a5](https://github.com/roadiz/compat-bundle/commit/b19d7a508de40f46397ea8d347526516405d9838))
+* Added aliases for UserJoinedGroupEvent and UserLeavedGroupEvent ([b19d7a5](https://github.com/roadiz/compat-bundle/commit/b19d7a508de40f46397ea8d347526516405d9838))
 
 ### Bug Fixes
 
