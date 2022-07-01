@@ -1,3 +1,9 @@
+## 2.0.1 (2022-07-01)
+
+### Bug Fixes
+
+* Missing subscribed services in Controller ([e10a628](https://github.com/roadiz/compat-bundle/commit/e10a6289f0335d7b3f0e1734daa9732f462693da))
+
 ## 2.0.0 (2022-07-01)
 
 ### Features
