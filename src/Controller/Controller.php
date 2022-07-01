@@ -89,6 +89,8 @@ abstract class Controller extends AbstractController
             EmailManager::class => EmailManager::class,
             Environment::class => Environment::class,
             FileAwareInterface::class => FileAwareInterface::class,
+            FormErrorSerializer::class => FormErrorSerializer::class,
+            LoggerInterface::class => LoggerInterface::class,
             NodeChrootResolver::class => NodeChrootResolver::class,
             NodeFactory::class => NodeFactory::class,
             NodeIndexer::class => NodeIndexer::class,
@@ -98,11 +100,11 @@ abstract class Controller extends AbstractController
             RandomImageFinder::class => RandomImageFinder::class,
             RendererInterface::class => RendererInterface::class,
             RequestStack::class => RequestStack::class,
+            Security::class => Security::class,
             Settings::class => Settings::class,
             Stopwatch::class => Stopwatch::class,
             TokenStorageInterface::class => TokenStorageInterface::class,
             TranslatorInterface::class => TranslatorInterface::class,
-            FormErrorSerializer::class => FormErrorSerializer::class,
             \RZ\Roadiz\Core\Handlers\HandlerFactoryInterface::class => HandlerFactoryInterface::class,
         ]);
     }
@@ -113,7 +115,7 @@ abstract class Controller extends AbstractController
     protected function getRequest(): Request
     {
         /** @var RequestStack $requestStack */
-        $requestStack = $this->get('request_stack');
+        $requestStack = $this->get(RequestStack::class);
         $request = $requestStack->getCurrentRequest();
         if (null === $request) {
             throw new BadRequestHttpException('Request is not available in this context');
