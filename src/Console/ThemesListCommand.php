@@ -6,6 +6,7 @@ namespace RZ\Roadiz\CompatBundle\Console;
 
 use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -58,6 +59,9 @@ class ThemesListCommand extends Command
              */
             $name = str_replace('/', '\\', $name);
             $theme = $this->themeResolver->findThemeByClass($name);
+            if (null === $theme) {
+                throw new InvalidArgumentException($name . ' theme cannot be found.');
+            }
             $tableContent[] = [
                 str_replace('\\', '/', $theme->getClassName()),
                 ($theme->isAvailable() ? 'X' : ''),

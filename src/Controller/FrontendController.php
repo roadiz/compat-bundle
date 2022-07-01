@@ -209,7 +209,7 @@ abstract class FrontendController extends AppController
             $this->getStopwatch()->start('prepareThemeAssignation');
             $this->storeNodeAndTranslation($node, $translation);
             $home = $this->getHome($translation);
-            if (null !== $home) {
+            if (null !== $home && null !== $translation) {
                 $this->assignation['home'] = $home;
                 $this->assignation['homeSource'] = $home->getNodeSourcesByTranslation($translation)->first();
             }

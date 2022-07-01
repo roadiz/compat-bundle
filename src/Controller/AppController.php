@@ -18,6 +18,7 @@ use RZ\Roadiz\CoreBundle\Entity\Theme;
 use RZ\Roadiz\CoreBundle\Entity\User;
 use RZ\Roadiz\CoreBundle\EntityHandler\NodeHandler;
 use RZ\Roadiz\CoreBundle\Exception\ThemeClassNotValidException;
+use RZ\Roadiz\CoreBundle\Form\Error\FormErrorSerializer;
 use RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver;
 use RZ\Roadiz\Utils\Asset\Packages;
 use Symfony\Component\Config\FileLocator;
@@ -663,39 +664,12 @@ abstract class AppController extends Controller
      *
      * @param FormInterface $form
      * @return array
+     * @deprecated Use FormErrorSerializer::getErrorsAsArray instead
      */
     protected function getErrorsAsArray(FormInterface $form): array
     {
-        $translator = $this->getTranslator();
-        $errors = [];
-        /** @var FormError $error */
-        foreach ($form->getErrors() as $error) {
-            $errorFieldName = $error->getOrigin()->getName();
-            if (count($error->getMessageParameters()) > 0) {
-                $errors[$errorFieldName] = $translator->trans($error->getMessageTemplate(), $error->getMessageParameters());
-            } else {
-                $errors[$errorFieldName] = $error->getMessage();
-            }
-            $cause = $error->getCause();
-            if (null !== $cause) {
-                if ($cause instanceof ConstraintViolation) {
-                    $cause = $cause->getCause();
-                }
-                if (null !== $cause && is_object($cause)) {
-                    if ($cause instanceof Exception) {
-                        $errors[$errorFieldName . '_cause_message'] = $cause->getMessage();
-                    }
-                    $errors[$errorFieldName . '_cause'] = get_class($cause);
-                }
-            }
-        }
-
-        foreach ($form->all() as $key => $child) {
-            $err = $this->getErrorsAsArray($child);
-            if ($err) {
-                $errors[$key] = $err;
-            }
-        }
-        return $errors;
+        /** @var FormErrorSerializer $formErrorSerializer */
+        $formErrorSerializer = $this->get(FormErrorSerializer::class);
+        return $formErrorSerializer->getErrorsAsArray($form);
     }
 }
