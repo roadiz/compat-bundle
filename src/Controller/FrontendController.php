@@ -7,7 +7,6 @@ namespace RZ\Roadiz\CompatBundle\Controller;
 use Psr\Log\LoggerInterface;
 use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
-use RZ\Roadiz\Core\Handlers\HandlerFactoryInterface;
 use RZ\Roadiz\CoreBundle\Bag\NodeTypes;
 use RZ\Roadiz\CoreBundle\Controller\DefaultNodeSourceController;
 use RZ\Roadiz\CoreBundle\Entity\Node;
@@ -71,9 +70,6 @@ abstract class FrontendController extends AppController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
-            'nodeTypesBag' => NodeTypes::class,
-            'nodeSourceApi' => NodeSourceApi::class,
-            LoggerInterface::class => LoggerInterface::class,
             ThemeResolverInterface::class => ThemeResolverInterface::class
         ]);
     }
