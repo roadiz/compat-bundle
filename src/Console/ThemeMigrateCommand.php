@@ -60,7 +60,7 @@ class ThemeMigrateCommand extends Command
             $this->runCommand(
                 'themes:install',
                 sprintf('--data "%s" --dry-run', $input->getArgument('classname')),
-                'dev',
+                null,
                 $input->isInteractive(),
                 $output->isQuiet(),
             );
@@ -68,7 +68,7 @@ class ThemeMigrateCommand extends Command
             $this->runCommand(
                 'doctrine:migrations:migrate',
                 '--allow-no-migration',
-                'dev',
+                null,
                 false,
                 $output->isQuiet()
             ) === 0 ? $io->success('doctrine:migrations:migrate') : $io->error('doctrine:migrations:migrate');
@@ -76,7 +76,7 @@ class ThemeMigrateCommand extends Command
             $this->runCommand(
                 'themes:install',
                 sprintf('--data "%s"', $input->getArgument('classname')),
-                'dev',
+                null,
                 $input->isInteractive(),
                 $output->isQuiet()
             ) === 0 ? $io->success('themes:install') : $io->error('themes:install');
@@ -84,7 +84,7 @@ class ThemeMigrateCommand extends Command
             $this->runCommand(
                 'generate:nsentities',
                 '',
-                'dev',
+                null,
                 $input->isInteractive(),
                 $output->isQuiet()
             ) === 0 ? $io->success('generate:nsentities') : $io->error('generate:nsentities');
@@ -92,7 +92,7 @@ class ThemeMigrateCommand extends Command
             $this->runCommand(
                 'doctrine:schema:update',
                 '--dump-sql --force',
-                'dev',
+                null,
                 $input->isInteractive(),
                 $output->isQuiet()
             ) === 0 ? $io->success('doctrine:schema:update') : $io->error('doctrine:schema:update');
@@ -100,18 +100,10 @@ class ThemeMigrateCommand extends Command
             $this->runCommand(
                 'cache:clear',
                 '',
-                'dev',
+                null,
                 $input->isInteractive(),
                 $output->isQuiet()
-            ) === 0 ? $io->success('cache:clear --env=dev') : $io->error('cache:clear --env=dev');
-
-            $this->runCommand(
-                'cache:clear',
-                '',
-                'prod',
-                $input->isInteractive(),
-                $output->isQuiet()
-            ) === 0 ? $io->success('cache:clear --env=prod') : $io->error('cache:clear --env=prod');
+            ) === 0 ? $io->success('cache:clear') : $io->error('cache:clear');
         }
         return 0;
     }
@@ -119,13 +111,14 @@ class ThemeMigrateCommand extends Command
     protected function runCommand(
         string $command,
         string $args = '',
-        string $environment = 'dev',
+        ?string $environment = null,
         bool $interactive = true,
         bool $quiet = false
     ): int {
         $args .= $interactive ? '' : ' --no-interaction ';
         $args .= $quiet ? ' --quiet ' : ' -v ';
-        $args .= ' --env ' . $environment;
+        $args .= is_string($environment) ? (' --env ' . $environment) : '';
+
         $process = Process::fromShellCommandline(
             'php bin/console ' . $command  . ' ' . $args
         );

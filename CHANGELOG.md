@@ -1,3 +1,9 @@
+## 2.0.2 (2022-08-05)
+
+### Bug Fixes
+
+* Do not execute themes:migrate command on all environments ([6e535d9](https://github.com/roadiz/compat-bundle/commit/6e535d9f583d3699b42a18a85ad5069025795180))
+
 ## 2.0.1 (2022-07-01)
 
 ### Bug Fixes
