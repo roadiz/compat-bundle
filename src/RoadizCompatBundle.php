@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle;
 
-use RZ\Roadiz\CompatBundle\DependencyInjection\Compiler\LegacyAliasesCompilerPass;
 use RZ\Roadiz\CompatBundle\DependencyInjection\Compiler\ThemesTranslatorPathsCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
