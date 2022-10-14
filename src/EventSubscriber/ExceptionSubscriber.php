@@ -200,8 +200,9 @@ final class ExceptionSubscriber implements EventSubscriberInterface
             $controller = $this->serviceLocator->get($serviceId);
         }
         if ($controller instanceof AppController) {
-            $controller->prepareBaseAssignation();
-            return $controller->throw404($exception->getMessage());
+            return $controller
+                ->prepareBaseAssignation()
+                ->throw404($exception->getMessage());
         }
 
         throw $exception;

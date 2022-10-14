@@ -311,8 +311,10 @@ abstract class FrontendController extends AppController
      *     * siteName
      *     * siteCopyright
      *     * siteDescription
+     *
+     * @return $this
      */
-    public function prepareBaseAssignation()
+    public function prepareBaseAssignation(): static
     {
         parent::prepareBaseAssignation();
 
