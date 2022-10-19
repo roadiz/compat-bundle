@@ -473,7 +473,7 @@ abstract class AppController extends Controller
      * @param NodesSources|null $source
      * @return void
      */
-    public function publishErrorMessage(Request $request, string $msg, NodesSources $source = null)
+    public function publishErrorMessage(Request $request, string $msg, NodesSources $source = null): void
     {
         $this->publishMessage($request, $msg, 'error', $source);
     }
@@ -484,14 +484,16 @@ abstract class AppController extends Controller
      * and throws an AccessDeniedException exception.
      *
      * @param mixed $attributes
-     * @param int|null $nodeId
+     * @param mixed $nodeId
      * @param bool|false $includeChroot
      * @return void
      *
      * @throws AccessDeniedException
      */
-    public function validateNodeAccessForRole($attributes, ?int $nodeId = null, bool $includeChroot = false)
+    public function validateNodeAccessForRole(mixed $attributes, mixed $nodeId = null, bool $includeChroot = false): void
     {
+        /** @var Node|null $node */
+        $node = null;
         /** @var User $user */
         $user = $this->getUser();
         /** @var NodeChrootResolver $chrootResolver */
@@ -500,26 +502,30 @@ abstract class AppController extends Controller
 
         if ($this->isGranted($attributes) && $chroot === null) {
             /*
-             * Already grant access if user is not chrooted.
+             * Already grant access if user is not chroot-ed.
              */
             return;
         }
 
-        /** @var Node|null $node */
-        $node = $this->em()->find(Node::class, (int) $nodeId);
+        if ($nodeId instanceof Node) {
+            $node = $nodeId;
+        } elseif (\is_scalar($nodeId)) {
+            /** @var Node|null $node */
+            $node = $this->em()->find(Node::class, (int) $nodeId);
+        }
 
-        if (null !== $node) {
-            $this->em()->refresh($node);
+        if (null === $node) {
+            throw new AccessDeniedException("You don't have access to this page");
+        }
 
-            /** @var NodeHandler $nodeHandler */
-            $nodeHandler = $this->getHandlerFactory()->getHandler($node);
-            $parents = $nodeHandler->getParents();
+        $this->em()->refresh($node);
 
-            if ($includeChroot) {
-                $parents[] = $node;
-            }
-        } else {
-            $parents = [];
+        /** @var NodeHandler $nodeHandler */
+        $nodeHandler = $this->getHandlerFactory()->getHandler($node);
+        $parents = $nodeHandler->getParents();
+
+        if ($includeChroot) {
+            $parents[] = $node;
         }
 
         if (!$this->isGranted($attributes)) {
@@ -538,7 +544,7 @@ abstract class AppController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function maintenanceAction(Request $request)
+    public function maintenanceAction(Request $request): Response
     {
         $this->prepareBaseAssignation();
 
@@ -550,7 +556,7 @@ abstract class AppController extends Controller
     }
 
     /**
-     * Make current response cachable by reverse proxy and browsers.
+     * Make current response cacheable by reverse proxy and browsers.
      *
      * Pay attention that, some reverse proxies systems will need to remove your response
      * cookies header to actually save your response.
@@ -574,7 +580,7 @@ abstract class AppController extends Controller
         Response $response,
         int $minutes,
         bool $allowClientCache = false
-    ) {
+    ): Response {
         /** @var Kernel $kernel */
         $kernel = $this->get('kernel');
         /** @var RequestStack $requestStack */

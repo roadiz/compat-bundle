@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Controller;
 
-use Psr\Log\LoggerInterface;
 use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
-use RZ\Roadiz\CoreBundle\Bag\NodeTypes;
 use RZ\Roadiz\CoreBundle\Controller\DefaultNodeSourceController;
 use RZ\Roadiz\CoreBundle\Entity\Node;
 use RZ\Roadiz\CoreBundle\Entity\NodesSources;
-use RZ\Roadiz\CoreBundle\EntityApi\NodeSourceApi;
 use RZ\Roadiz\CoreBundle\EntityHandler\NodesSourcesHandler;
 use RZ\Roadiz\CoreBundle\Routing\NodeRouteHelper;
 use Symfony\Component\HttpFoundation\Request;
@@ -328,7 +325,7 @@ abstract class FrontendController extends AppController
     /**
      * {@inheritdoc}
      */
-    public function maintenanceAction(Request $request)
+    public function maintenanceAction(Request $request): Response
     {
         $translation = $this->bindLocaleFromRoute($request, $request->getLocale());
         $this->prepareThemeAssignation(null, $translation);
