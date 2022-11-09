@@ -1,3 +1,9 @@
+## 2.0.3 (2022-11-09)
+
+### Bug Fixes
+
+* Do not allow entityListManager to sort and search upon request on frontend ([1e1601c](https://github.com/roadiz/compat-bundle/commit/1e1601c22f845a772cde7f455a051bc2a421c2f6))
+
 ## 2.0.2 (2022-08-05)
 
 ### Bug Fixes
