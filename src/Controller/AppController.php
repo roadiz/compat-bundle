@@ -9,7 +9,6 @@ use ReflectionClass;
 use ReflectionException;
 use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
-use RZ\Roadiz\Core\Models\FileAwareInterface;
 use RZ\Roadiz\CoreBundle\Entity\Node;
 use RZ\Roadiz\CoreBundle\Entity\NodesSources;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
@@ -18,7 +17,7 @@ use RZ\Roadiz\CoreBundle\EntityHandler\NodeHandler;
 use RZ\Roadiz\CoreBundle\Exception\ThemeClassNotValidException;
 use RZ\Roadiz\CoreBundle\Form\Error\FormErrorSerializer;
 use RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver;
-use RZ\Roadiz\Utils\Asset\Packages;
+use RZ\Roadiz\Documents\Packages;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -322,8 +321,6 @@ abstract class AppController extends Controller
     {
         /** @var KernelInterface $kernel */
         $kernel = $this->get('kernel');
-        /** @var FileAwareInterface $fileAware */
-        $fileAware = $this->get(FileAwareInterface::class);
         $this->assignation = [
             'head' => [
                 'ajax' => $this->getRequest()->isXmlHttpRequest(),
@@ -332,7 +329,6 @@ abstract class AppController extends Controller
                 'universalAnalyticsId' => $this->getSettingsBag()->get('universal_analytics_id'),
                 'googleTagManagerId' => $this->getSettingsBag()->get('google_tag_manager_id'),
                 'baseUrl' => $this->getRequest()->getSchemeAndHttpHost() . $this->getRequest()->getBasePath(),
-                'filesUrl' => $this->getRequest()->getBaseUrl() . $fileAware->getPublicFilesBasePath(),
                 'resourcesUrl' => $this->getStaticResourcesUrl(),
                 'absoluteResourcesUrl' => $this->getAbsoluteStaticResourceUrl(),
             ]

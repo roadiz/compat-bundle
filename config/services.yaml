@@ -58,7 +58,7 @@ services:
         alias: RZ\Roadiz\CoreBundle\Bag\Roles
         public: true
     assetPackages:
-        alias: RZ\Roadiz\Utils\Asset\Packages
+        alias: RZ\Roadiz\Documents\Packages
         public: true
     Symfony\Contracts\Translation\TranslatorInterface:
         alias: 'translator.default'
