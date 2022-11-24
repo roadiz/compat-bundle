@@ -87,7 +87,7 @@ final class Aliases
             \RZ\Roadiz\CoreBundle\Entity\User::class => \RZ\Roadiz\Core\Entities\User::class,
             \RZ\Roadiz\CoreBundle\Entity\UserLogEntry::class => \RZ\Roadiz\Core\Entities\UserLogEntry::class,
             \RZ\Roadiz\CoreBundle\Entity\Webhook::class => \RZ\Roadiz\Webhook\Entity\Webhook::class,
-            \RZ\Roadiz\CoreBundle\Event\Cache\CachePurgeAssetsRequestEvent::class => \RZ\Roadiz\Core\Events\Cache\CachePurgeAssetsRequestEvent::class,
+            \RZ\Roadiz\Documents\Events\CachePurgeAssetsRequestEvent::class => \RZ\Roadiz\Core\Events\Cache\CachePurgeAssetsRequestEvent::class,
             \RZ\Roadiz\CoreBundle\Event\Cache\CachePurgeRequestEvent::class => \RZ\Roadiz\Core\Events\Cache\CachePurgeRequestEvent::class,
             \RZ\Roadiz\CoreBundle\Event\Document\DocumentTranslationUpdatedEvent::class => \RZ\Roadiz\Core\Events\DocumentTranslationUpdatedEvent::class,
             \RZ\Roadiz\CoreBundle\Event\FilterCacheEvent::class => \RZ\Roadiz\Core\Events\FilterCacheEvent::class,
