@@ -205,6 +205,10 @@ abstract class Controller extends AbstractController
         return $settingsBag;
     }
 
+    /**
+     * @return Packages
+     * @deprecated
+     */
     protected function getPackages(): Packages
     {
         /** @var Packages $packages */ # php-stan hint

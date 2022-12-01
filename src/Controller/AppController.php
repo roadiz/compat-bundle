@@ -329,30 +329,10 @@ abstract class AppController extends Controller
                 'universalAnalyticsId' => $this->getSettingsBag()->get('universal_analytics_id'),
                 'googleTagManagerId' => $this->getSettingsBag()->get('google_tag_manager_id'),
                 'baseUrl' => $this->getRequest()->getSchemeAndHttpHost() . $this->getRequest()->getBasePath(),
-                'resourcesUrl' => $this->getStaticResourcesUrl(),
-                'absoluteResourcesUrl' => $this->getAbsoluteStaticResourceUrl(),
             ]
         ];
 
         return $this;
-    }
-
-    /**
-     * @return string
-     * @deprecated Use asset() twig function
-     */
-    public function getStaticResourcesUrl(): string
-    {
-        return $this->getPackages()->getUrl('themes/' . static::$themeDir . '/static/');
-    }
-
-    /**
-     * @return string
-     * @deprecated Use absolute_url(asset()) twig function
-     */
-    public function getAbsoluteStaticResourceUrl(): string
-    {
-        return $this->getPackages()->getUrl('themes/' . static::$themeDir . '/static/', Packages::ABSOLUTE);
     }
 
     /**
