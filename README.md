@@ -1,7 +1,7 @@
 # Roadiz compatibility bundle
 **Adds a thin compatibility layer between Roadiz v2 and legacy themes**
 
-[![Build Status](https://app.travis-ci.com/roadiz/compat-bundle.svg?branch=main)](https://app.travis-ci.com/roadiz/compat-bundle)
+![Run test status](https://github.com/roadiz/compat-bundle/actions/workflows/run-test.yml/badge.svg?branch=develop)
 
 Installation
 ============
