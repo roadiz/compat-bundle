@@ -33,7 +33,8 @@
         "roadiz/models": "~2.1.0 || dev-develop",
         "roadiz/documents": "~2.1.0 || dev-develop",
         "roadiz/entity-generator": "~2.1.0 || dev-develop",
-        "rezozero/intervention-request-bundle": "~3.0.0 || dev-develop"
+        "rezozero/intervention-request-bundle": "~3.0.0 || dev-develop",
+        "ambroisemaupate/intervention-request": "^4.0 || dev-develop"
     },
     "config": {
         "optimize-autoloader": true,
