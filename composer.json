@@ -21,7 +21,7 @@
         "php": ">=8.0",
         "symfony/framework-bundle": "5.4.*",
         "roadiz/core-bundle": "~2.1.0 || dev-develop",
-        "roadiz/openid": "~2.0.0",
+        "roadiz/openid": "~2.1.0 || dev-develop",
         "pimple/pimple": "^3.3.1"
     },
     "require-dev": {
@@ -58,6 +58,7 @@
     },
     "extra": {
         "branch-alias": {
+            "dev-main": "2.0-dev",
             "dev-develop": "2.1-dev"
         }
     }
