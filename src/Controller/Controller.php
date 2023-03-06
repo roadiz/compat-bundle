@@ -9,7 +9,6 @@ use Doctrine\Persistence\ObjectManager;
 use Psr\Log\LoggerInterface;
 use RZ\Roadiz\Core\AbstractEntities\TranslationInterface;
 use RZ\Roadiz\Core\Handlers\HandlerFactoryInterface;
-use RZ\Roadiz\Core\Models\FileAwareInterface;
 use RZ\Roadiz\CoreBundle\Bag\NodeTypes;
 use RZ\Roadiz\CoreBundle\Bag\Roles;
 use RZ\Roadiz\CoreBundle\Bag\Settings;
@@ -29,11 +28,11 @@ use RZ\Roadiz\CoreBundle\Repository\TranslationRepository;
 use RZ\Roadiz\CoreBundle\SearchEngine\Indexer\NodeIndexer;
 use RZ\Roadiz\CoreBundle\SearchEngine\NodeSourceSearchHandlerInterface;
 use RZ\Roadiz\CoreBundle\Security\Authorization\Chroot\NodeChrootResolver;
-use RZ\Roadiz\Document\Renderer\RendererInterface;
+use RZ\Roadiz\Documents\MediaFinders\RandomImageFinder;
+use RZ\Roadiz\Documents\Packages;
+use RZ\Roadiz\Documents\Renderer\RendererInterface;
+use RZ\Roadiz\Documents\UrlGenerators\DocumentUrlGeneratorInterface;
 use RZ\Roadiz\OpenId\OAuth2LinkGenerator;
-use RZ\Roadiz\Utils\Asset\Packages;
-use RZ\Roadiz\Utils\MediaFinders\RandomImageFinder;
-use RZ\Roadiz\Utils\UrlGenerators\DocumentUrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -88,7 +87,6 @@ abstract class Controller extends AbstractController
             DocumentUrlGeneratorInterface::class => DocumentUrlGeneratorInterface::class,
             EmailManager::class => EmailManager::class,
             Environment::class => Environment::class,
-            FileAwareInterface::class => FileAwareInterface::class,
             FormErrorSerializer::class => FormErrorSerializer::class,
             LoggerInterface::class => LoggerInterface::class,
             NodeChrootResolver::class => NodeChrootResolver::class,
@@ -207,6 +205,10 @@ abstract class Controller extends AbstractController
         return $settingsBag;
     }
 
+    /**
+     * @return Packages
+     * @deprecated
+     */
     protected function getPackages(): Packages
     {
         /** @var Packages $packages */ # php-stan hint

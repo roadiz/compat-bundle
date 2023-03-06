@@ -90,6 +90,14 @@ class ThemeMigrateCommand extends Command
             ) === 0 ? $io->success('generate:nsentities') : $io->error('generate:nsentities');
 
             $this->runCommand(
+                'doctrine:cache:clear-metadata',
+                '',
+                null,
+                $input->isInteractive(),
+                $output->isQuiet()
+            ) === 0 ? $io->success('doctrine:cache:clear-metadata') : $io->error('doctrine:cache:clear-metadata');
+
+            $this->runCommand(
                 'doctrine:schema:update',
                 '--dump-sql --force',
                 null,
