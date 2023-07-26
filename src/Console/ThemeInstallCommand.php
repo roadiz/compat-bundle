@@ -28,6 +28,8 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Command line utils for managing themes from terminal.
+ *
+ * @deprecated Use RZ\Roadiz\CoreBundle\Console\AppInstallCommand instead.
  */
 class ThemeInstallCommand extends Command
 {
@@ -145,7 +147,7 @@ class ThemeInstallCommand extends Command
     {
         $data = $this->getThemeConfig($themeConfigPath);
 
-        if (false !== $data && isset($data["importFiles"])) {
+        if (isset($data["importFiles"])) {
             if (isset($data["importFiles"]['groups'])) {
                 foreach ($data["importFiles"]['groups'] as $filename) {
                     $this->importFile($themeInfo, $filename, $this->groupsImporter);
@@ -227,6 +229,10 @@ class ThemeInstallCommand extends Command
         if (false === $fileContent = file_get_contents($themeConfigPath)) {
             throw new \RuntimeException($themeConfigPath . ' file is not readable');
         }
-        return Yaml::parse($fileContent);
+        $data = Yaml::parse($fileContent);
+        if (!\is_array($data)) {
+            throw new \RuntimeException($themeConfigPath . ' file is not a valid YAML file');
+        }
+        return $data;
     }
 }
