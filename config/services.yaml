@@ -57,6 +57,10 @@ services:
     rolesBag:
         alias: RZ\Roadiz\CoreBundle\Bag\Roles
         public: true
+    assetPackages:
+        alias: RZ\Roadiz\Documents\Packages
+        deprecated: ~
+        public: true
     Symfony\Contracts\Translation\TranslatorInterface:
         alias: 'translator.default'
         public: true
@@ -116,4 +120,5 @@ services:
     RZ\Roadiz\CompatBundle\EventSubscriber\ExceptionSubscriber:
         arguments:
             - '@RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface'
+            - '@RZ\Roadiz\CoreBundle\Exception\ExceptionViewer'
             - '@service_container'
