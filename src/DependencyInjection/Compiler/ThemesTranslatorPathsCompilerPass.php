@@ -21,9 +21,6 @@ class ThemesTranslatorPathsCompilerPass implements CompilerPassInterface
         }
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     private function registerThemeTranslatorResources(ContainerBuilder $container): void
     {
         /** @var string $projectDir */
