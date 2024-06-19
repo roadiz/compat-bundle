@@ -27,9 +27,8 @@ final class ThemeInfo
     private static array $protectedThemeNames = ['Rozier'];
 
     /**
-     * @param string $name Short theme name or FQN classname
+     * @param class-string|string $name Short theme name or FQN classname
      * @param string $projectDir
-     * @throws ThemeClassNotValidException
      */
     public function __construct(string $name, string $projectDir)
     {
@@ -98,7 +97,6 @@ final class ThemeInfo
     /**
      * @param class-string $classname
      * @return class-string
-     * @throws ThemeClassNotValidException
      */
     protected function validateClassname(string $classname): string
     {
