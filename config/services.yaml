@@ -40,6 +40,7 @@ services:
     # Explicit declaration
     RZ\Roadiz\CompatBundle\Controller\AppController: ~
     RZ\Roadiz\CompatBundle\Controller\Controller: ~
+    RZ\Roadiz\CompatBundle\Controller\FrontendController: ~
 
     securityTokenStorage:
         alias: security.token_storage
@@ -55,6 +56,10 @@ services:
         public: true
     rolesBag:
         alias: RZ\Roadiz\CoreBundle\Bag\Roles
+        public: true
+    assetPackages:
+        alias: RZ\Roadiz\Documents\Packages
+        deprecated: ~
         public: true
     Symfony\Contracts\Translation\TranslatorInterface:
         alias: 'translator.default'
@@ -89,6 +94,8 @@ services:
     roadiz_compat.twig_loader:
         class: Twig\Loader\FilesystemLoader
         tags: ['twig.loader']
+    RZ\Roadiz\CompatBundle\Routing\ThemeRoutesLoader:
+        tags: [ routing.loader ]
 
     #
     # Made routers theme aware
@@ -113,4 +120,5 @@ services:
     RZ\Roadiz\CompatBundle\EventSubscriber\ExceptionSubscriber:
         arguments:
             - '@RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface'
+            - '@RZ\Roadiz\CoreBundle\Exception\ExceptionViewer'
             - '@service_container'
