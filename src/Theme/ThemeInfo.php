@@ -22,18 +22,17 @@ final class ThemeInfo
      */
     private ?string $classname = null;
     private Filesystem $filesystem;
-    private string $projectDir;
     private ?string $themePath = null;
     private static array $protectedThemeNames = ['Rozier'];
 
     /**
-     * @param class-string|string $name Short theme name or FQN classname
+     * @param string $name Short theme name or FQN classname
      * @param string $projectDir
+     * @throws ThemeClassNotValidException
      */
-    public function __construct(string $name, string $projectDir)
+    public function __construct(string $name, private readonly string $projectDir)
     {
         $this->filesystem = new Filesystem();
-        $this->projectDir = $projectDir;
 
         if (class_exists($name)) {
             /*
@@ -41,11 +40,10 @@ final class ThemeInfo
              */
             $this->classname = $this->validateClassname($name);
             $this->name = $this->extractNameFromClassname($this->classname);
-            $this->themeName = $this->getThemeNameFromName();
         } else {
             $this->name = $this->validateName($name);
-            $this->themeName = $this->getThemeNameFromName();
         }
+        $this->themeName = $this->getThemeNameFromName();
     }
 
     public function isProtected(): bool
@@ -61,16 +59,10 @@ final class ThemeInfo
      */
     protected function guessClassnameFromThemeName(string $themeName): string
     {
-        switch ($themeName) {
-            case 'RozierApp':
-            case 'RozierTheme':
-            case 'Rozier':
-                $className = '\\Themes\\Rozier\\RozierApp';
-                break;
-            default:
-                $className = '\\Themes\\' . $themeName . '\\' . $themeName . 'App';
-                break;
-        }
+        $className = match ($themeName) {
+            'RozierApp', 'RozierTheme', 'Rozier' => '\\Themes\\Rozier\\RozierApp',
+            default => '\\Themes\\' . $themeName . '\\' . $themeName . 'App',
+        };
 
         if (class_exists($className)) {
             return $className;
@@ -86,6 +78,7 @@ final class ThemeInfo
      * @param class-string $classname
      *
      * @return string
+     * @throws ThemeClassNotValidException
      */
     protected function extractNameFromClassname(string $classname): string
     {
@@ -97,6 +90,7 @@ final class ThemeInfo
     /**
      * @param class-string $classname
      * @return class-string
+     * @throws ThemeClassNotValidException
      */
     protected function validateClassname(string $classname): string
     {
@@ -112,7 +106,6 @@ final class ThemeInfo
 
     /**
      * @param string $name
-     *
      * @return string
      */
     protected function validateName(string $name): string
@@ -130,6 +123,7 @@ final class ThemeInfo
 
     /**
      * @return bool
+     * @throws ThemeClassNotValidException
      */
     public function exists(): bool
     {
@@ -162,6 +156,7 @@ final class ThemeInfo
      * Attention: theme could be located in vendor folder (/vendor/roadiz/roadiz)
      *
      * @return string Theme absolute path.
+     * @throws ThemeClassNotValidException
      */
     public function getThemePath(): string
     {
@@ -184,6 +179,7 @@ final class ThemeInfo
      * @param class-string|null $className
      *
      * @return null|ReflectionClass
+     * @throws ThemeClassNotValidException
      */
     public function getThemeReflectionClass(string $className = null): ?ReflectionClass
     {
@@ -232,6 +228,7 @@ final class ThemeInfo
 
     /**
      * @return class-string Theme class FQN
+     * @throws ThemeClassNotValidException
      */
     public function getClassname(): string
     {
@@ -243,16 +240,12 @@ final class ThemeInfo
 
     /**
      * @return bool
+     * @throws ThemeClassNotValidException
      */
     public function isValid(): bool
     {
         try {
             $className = $this->getClassname();
-        } catch (\InvalidArgumentException $exception) {
-            return false;
-        }
-
-        try {
             $reflection = new ReflectionClass($className);
             if ($reflection->isSubclassOf(AbstractController::class)) {
                 return true;
