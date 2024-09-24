@@ -7,6 +7,7 @@ namespace RZ\Roadiz\CompatBundle\EventSubscriber;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\Log\LoggerInterface;
 use RZ\Roadiz\CompatBundle\Controller\AppController;
 use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
@@ -31,11 +32,21 @@ use Twig\Error\SyntaxError;
  */
 final class ExceptionSubscriber implements EventSubscriberInterface
 {
+    protected LoggerInterface $logger;
+    private ThemeResolverInterface $themeResolver;
+    private ContainerInterface $serviceLocator;
+    protected bool $debug;
+
     public function __construct(
-        private readonly ThemeResolverInterface $themeResolver,
-        private readonly ContainerInterface $serviceLocator,
-        private readonly bool $debug
+        ThemeResolverInterface $themeResolver,
+        ContainerInterface $serviceLocator,
+        LoggerInterface $logger,
+        bool $debug
     ) {
+        $this->debug = $debug;
+        $this->themeResolver = $themeResolver;
+        $this->serviceLocator = $serviceLocator;
+        $this->logger = $logger;
     }
 
     /**
