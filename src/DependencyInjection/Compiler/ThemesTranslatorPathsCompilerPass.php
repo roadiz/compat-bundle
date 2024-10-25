@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Finder\Finder;
 
-class ThemesTranslatorPathsCompilerPass implements CompilerPassInterface
+final class ThemesTranslatorPathsCompilerPass implements CompilerPassInterface
 {
     /**
      * @inheritDoc
@@ -21,6 +21,9 @@ class ThemesTranslatorPathsCompilerPass implements CompilerPassInterface
         }
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     private function registerThemeTranslatorResources(ContainerBuilder $container): void
     {
         /** @var string $projectDir */
