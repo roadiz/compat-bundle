@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Routing;
 
-use Psr\Cache\InvalidArgumentException;
 use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\CoreBundle\Routing\NodeRouter;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
@@ -14,12 +13,19 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-final readonly class ThemeAwareNodeRouter implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface
+final class ThemeAwareNodeRouter implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface
 {
-    public function __construct(
-        private ThemeResolverInterface $themeResolver,
-        private NodeRouter $innerRouter,
-    ) {
+    private ThemeResolverInterface $themeResolver;
+    private NodeRouter $innerRouter;
+
+    /**
+     * @param ThemeResolverInterface $themeResolver
+     * @param NodeRouter $innerRouter
+     */
+    public function __construct(ThemeResolverInterface $themeResolver, NodeRouter $innerRouter)
+    {
+        $this->themeResolver = $themeResolver;
+        $this->innerRouter = $innerRouter;
     }
 
     public function setContext(RequestContext $context): void
@@ -42,13 +48,9 @@ final readonly class ThemeAwareNodeRouter implements RouterInterface, RequestMat
         return $this->innerRouter->getRouteCollection();
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         $this->innerRouter->setTheme($this->themeResolver->findTheme($this->getContext()->getHost()));
-
         return $this->innerRouter->generate($name, $parameters, $referenceType);
     }
 
@@ -57,7 +59,12 @@ final readonly class ThemeAwareNodeRouter implements RouterInterface, RequestMat
         return $this->innerRouter->match($pathinfo);
     }
 
-    public function getRouteDebugMessage(mixed $name, array $parameters = []): string
+    public function supports($name): bool
+    {
+        return $this->innerRouter->supports($name);
+    }
+
+    public function getRouteDebugMessage($name, array $parameters = []): string
     {
         return $this->innerRouter->getRouteDebugMessage($name, $parameters);
     }
