@@ -7,7 +7,6 @@ namespace RZ\Roadiz\CompatBundle\EventSubscriber;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use Psr\Log\LoggerInterface;
 use RZ\Roadiz\CompatBundle\Controller\AppController;
 use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
@@ -22,36 +21,19 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Throwable;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 
-/**
- * @package RZ\Roadiz\CoreBundle\Event
- */
-final class ExceptionSubscriber implements EventSubscriberInterface
+final readonly class ExceptionSubscriber implements EventSubscriberInterface
 {
-    protected LoggerInterface $logger;
-    private ThemeResolverInterface $themeResolver;
-    private ContainerInterface $serviceLocator;
-    protected bool $debug;
-
     public function __construct(
-        ThemeResolverInterface $themeResolver,
-        ContainerInterface $serviceLocator,
-        LoggerInterface $logger,
-        bool $debug
+        private ThemeResolverInterface $themeResolver,
+        private ContainerInterface $serviceLocator,
+        private bool $debug,
     ) {
-        $this->debug = $debug;
-        $this->themeResolver = $themeResolver;
-        $this->serviceLocator = $serviceLocator;
-        $this->logger = $logger;
     }
 
-    /**
-     * @return array
-     */
     public static function getSubscribedEvents(): array
     {
         /*
@@ -62,17 +44,13 @@ final class ExceptionSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param Request $request
-     * @return bool
-     */
     private function isFormatJson(Request $request): bool
     {
         if (
-            $request->attributes->has('_format') &&
-            (
-                $request->attributes->get('_format') == 'json' ||
-                $request->attributes->get('_format') == 'ld+json'
+            $request->attributes->has('_format')
+            && (
+                'json' == $request->attributes->get('_format')
+                || 'ld+json' == $request->attributes->get('_format')
             )
         ) {
             return true;
@@ -80,18 +58,18 @@ final class ExceptionSubscriber implements EventSubscriberInterface
 
         $contentType = $request->headers->get('Content-Type');
         if (
-            \is_string($contentType) &&
-            (
-                \str_starts_with($contentType, 'application/json') ||
-                \str_starts_with($contentType, 'application/ld+json')
+            \is_string($contentType)
+            && (
+                \str_starts_with($contentType, 'application/json')
+                || \str_starts_with($contentType, 'application/ld+json')
             )
         ) {
             return true;
         }
 
         if (
-            in_array('application/json', $request->getAcceptableContentTypes()) ||
-            in_array('application/ld+json', $request->getAcceptableContentTypes())
+            in_array('application/json', $request->getAcceptableContentTypes())
+            || in_array('application/ld+json', $request->getAcceptableContentTypes())
         ) {
             return true;
         }
@@ -99,11 +77,7 @@ final class ExceptionSubscriber implements EventSubscriberInterface
         return false;
     }
 
-    /**
-     * @param Throwable $exception
-     * @return int
-     */
-    private function getHttpStatusCode(Throwable $exception): int
+    private function getHttpStatusCode(\Throwable $exception): int
     {
         if ($exception instanceof AccessDeniedException || $exception instanceof AccessDeniedHttpException) {
             return Response::HTTP_FORBIDDEN;
@@ -119,12 +93,11 @@ final class ExceptionSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param ExceptionEvent $event
      * @throws LoaderError
      * @throws RuntimeError
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws Throwable
+     * @throws \Throwable
      * @throws SyntaxError
      */
     public function onKernelException(ExceptionEvent $event): void
@@ -150,8 +123,8 @@ final class ExceptionSubscriber implements EventSubscriberInterface
                  */
                 $ctrl = $exception->getController();
                 if (
-                    null !== $ctrl &&
-                    method_exists($ctrl, 'maintenanceAction')
+                    null !== $ctrl
+                    && method_exists($ctrl, 'maintenanceAction')
                 ) {
                     try {
                         /** @var Response $response */
@@ -159,6 +132,7 @@ final class ExceptionSubscriber implements EventSubscriberInterface
                         // Set http code according to status
                         $response->setStatusCode($this->getHttpStatusCode($exception));
                         $event->setResponse($response);
+
                         return;
                     } catch (LoaderError $error) {
                         // Twig template does not exist
@@ -171,23 +145,19 @@ final class ExceptionSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param ExceptionEvent $event
-     * @return null|Theme
-     */
     protected function isNotFoundExceptionWithTheme(ExceptionEvent $event): ?Theme
     {
         $exception = $event->getThrowable();
         $request = $event->getRequest();
 
         if (
-            $exception instanceof ResourceNotFoundException ||
-            $exception instanceof NotFoundHttpException ||
-            (
-                null !== $exception->getPrevious() &&
-                (
-                    $exception->getPrevious() instanceof ResourceNotFoundException ||
-                    $exception->getPrevious() instanceof NotFoundHttpException
+            $exception instanceof ResourceNotFoundException
+            || $exception instanceof NotFoundHttpException
+            || (
+                null !== $exception->getPrevious()
+                && (
+                    $exception->getPrevious() instanceof ResourceNotFoundException
+                    || $exception->getPrevious() instanceof NotFoundHttpException
                 )
             )
         ) {
@@ -205,19 +175,14 @@ final class ExceptionSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Theme $theme
-     * @param Throwable $exception
-     * @param ExceptionEvent $event
-     *
-     * @return Response
      * @throws LoaderError
      * @throws RuntimeError
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @throws Throwable
+     * @throws \Throwable
      * @throws SyntaxError
      */
-    protected function createThemeNotFoundResponse(Theme $theme, Throwable $exception, ExceptionEvent $event): Response
+    protected function createThemeNotFoundResponse(Theme $theme, \Throwable $exception, ExceptionEvent $event): Response
     {
         $ctrlClass = $theme->getClassName();
         $controller = new $ctrlClass();
@@ -227,9 +192,7 @@ final class ExceptionSubscriber implements EventSubscriberInterface
             $controller = $this->serviceLocator->get($serviceId);
         }
         if ($controller instanceof AppController) {
-            return $controller
-                ->prepareBaseAssignation()
-                ->throw404($exception->getMessage());
+            return $controller->throw404($exception->getMessage());
         }
 
         throw $exception;

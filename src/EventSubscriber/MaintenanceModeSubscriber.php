@@ -5,40 +5,28 @@ declare(strict_types=1);
 namespace RZ\Roadiz\CompatBundle\EventSubscriber;
 
 use RZ\Roadiz\CompatBundle\Controller\AppController;
+use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use RZ\Roadiz\CoreBundle\Bag\Settings;
 use RZ\Roadiz\CoreBundle\Entity\Theme;
 use RZ\Roadiz\CoreBundle\Exception\MaintenanceModeException;
-use RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Security\Core\Security;
 
-final class MaintenanceModeSubscriber implements EventSubscriberInterface
+final readonly class MaintenanceModeSubscriber implements EventSubscriberInterface
 {
-    private Settings $settings;
-    private Security $security;
-    private ThemeResolverInterface $themeResolver;
-    private ContainerInterface $serviceLocator;
-
     public function __construct(
-        Settings $settings,
-        Security $security,
-        ThemeResolverInterface $themeResolver,
-        ContainerInterface $serviceLocator
+        private Settings $settings,
+        private Security $security,
+        private ThemeResolverInterface $themeResolver,
+        private ContainerInterface $serviceLocator,
     ) {
-        $this->settings = $settings;
-        $this->security = $security;
-        $this->themeResolver = $themeResolver;
-        $this->serviceLocator = $serviceLocator;
     }
 
-    /**
-     * @return array
-     */
     private function getAuthorizedRoutes(): array
     {
         return [
@@ -68,9 +56,6 @@ final class MaintenanceModeSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @return array
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -79,7 +64,6 @@ final class MaintenanceModeSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param RequestEvent $event
      * @throws MaintenanceModeException
      */
     public function onRequest(RequestEvent $event): void
@@ -91,8 +75,8 @@ final class MaintenanceModeSubscriber implements EventSubscriberInterface
 
             $maintenanceMode = (bool) $this->settings->get('maintenance_mode', false);
             if (
-                $maintenanceMode === true &&
-                !$this->security->isGranted('ROLE_BACKEND_USER')
+                true === $maintenanceMode
+                && !$this->security->isGranted('ROLE_BACKEND_USER')
             ) {
                 $theme = $this->themeResolver->findTheme(null);
                 if (null !== $theme) {
@@ -103,12 +87,6 @@ final class MaintenanceModeSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param Theme   $theme
-     * @param Request $request
-     *
-     * @return AbstractController
-     */
     private function getControllerForTheme(Theme $theme, Request $request): AbstractController
     {
         $ctrlClass = $theme->getClassName();
@@ -120,26 +98,12 @@ final class MaintenanceModeSubscriber implements EventSubscriberInterface
         }
 
         if (!$controller instanceof AbstractController) {
-            throw new \RuntimeException(sprintf(
-                'Theme controller %s must extend %s class',
-                $ctrlClass,
-                AbstractController::class
-            ));
+            throw new \RuntimeException(sprintf('Theme controller %s must extend %s class', $ctrlClass, AbstractController::class));
         }
 
         if ($controller instanceof AppController) {
-            $controller->prepareBaseAssignation();
             // No node controller matching in install mode
             $request->attributes->set('theme', $controller->getTheme());
-        }
-
-        /*
-         * Set request locale if _locale param
-         * is present in Route.
-         */
-        $routeParams = $request->get('_route_params');
-        if (!empty($routeParams["_locale"])) {
-            $request->setLocale($routeParams["_locale"]);
         }
 
         return $controller;
