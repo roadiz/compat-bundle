@@ -19,9 +19,28 @@ services:
             - '../src/Tests/'
             - '../src/Event/'
 
+    #
+    # Automatic themes registration
+    #
+    Themes\:
+        resource: '%kernel.project_dir%/themes/'
+        autowire: true
+        autoconfigure: true
+        exclude:
+            - '%kernel.project_dir%/themes/DependencyInjection/'
+            - '%kernel.project_dir%/themes/app/'
+            - '%kernel.project_dir%/themes/public/'
+            - '%kernel.project_dir%/themes/Resources/'
+            - '%kernel.project_dir%/themes/Services/'
+            - '%kernel.project_dir%/themes/static/'
+            - '%kernel.project_dir%/themes/Entity/'
+            - '%kernel.project_dir%/themes/Kernel.php'
+            - '%kernel.project_dir%/themes/Tests/'
+
     # Explicit declaration
     RZ\Roadiz\CompatBundle\Controller\AppController: ~
     RZ\Roadiz\CompatBundle\Controller\Controller: ~
+    RZ\Roadiz\CompatBundle\Controller\FrontendController: ~
 
     securityTokenStorage:
         alias: security.token_storage
@@ -37,6 +56,10 @@ services:
         public: true
     rolesBag:
         alias: RZ\Roadiz\CoreBundle\Bag\Roles
+        public: true
+    assetPackages:
+        alias: RZ\Roadiz\Documents\Packages
+        deprecated: ~
         public: true
     Symfony\Contracts\Translation\TranslatorInterface:
         alias: 'translator.default'
@@ -71,6 +94,8 @@ services:
     roadiz_compat.twig_loader:
         class: Twig\Loader\FilesystemLoader
         tags: ['twig.loader']
+    RZ\Roadiz\CompatBundle\Routing\ThemeRoutesLoader:
+        tags: [ routing.loader ]
 
     #
     # Made routers theme aware
@@ -95,4 +120,5 @@ services:
     RZ\Roadiz\CompatBundle\EventSubscriber\ExceptionSubscriber:
         arguments:
             - '@RZ\Roadiz\CompatBundle\Theme\ThemeResolverInterface'
+            - '@RZ\Roadiz\CoreBundle\Exception\ExceptionViewer'
             - '@service_container'
