@@ -8,6 +8,9 @@ use RZ\Roadiz\CoreBundle\Entity\Theme;
 
 interface ThemeResolverInterface
 {
+    /**
+     * @return Theme
+     */
     public function getBackendTheme(): Theme;
 
     /**
@@ -15,8 +18,18 @@ interface ThemeResolverInterface
      */
     public function getBackendClassName(): string;
 
-    public function findTheme(?string $host = null): ?Theme;
+    /**
+     * @param string|null $host
+     *
+     * @return Theme|null
+     */
+    public function findTheme(string $host = null): ?Theme;
 
+    /**
+     * @param string $classname
+     *
+     * @return Theme|null
+     */
     public function findThemeByClass(string $classname): ?Theme;
 
     /**
@@ -26,6 +39,8 @@ interface ThemeResolverInterface
 
     /**
      * @param int $id
+     *
+     * @return Theme|null
      */
     public function findById($id): ?Theme;
 
