@@ -23,9 +23,6 @@ use Twig\Error\SyntaxError;
  */
 abstract class AppController extends Controller
 {
-    /**
-     * @deprecated
-     */
     public const AJAX_TOKEN_INTENTION = 'ajax';
 
     /**
