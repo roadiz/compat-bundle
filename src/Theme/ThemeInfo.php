@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace RZ\Roadiz\CompatBundle\Theme;
 
+use ReflectionClass;
+use ReflectionException;
+use RuntimeException;
 use RZ\Roadiz\CompatBundle\Controller\AppController;
 use RZ\Roadiz\CoreBundle\Exception\ThemeClassNotValidException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,7 +27,7 @@ final class ThemeInfo
 
     /**
      * @param string $name Short theme name or FQN classname
-     *
+     * @param string $projectDir
      * @throws ThemeClassNotValidException
      */
     public function __construct(string $name, private readonly string $projectDir)
@@ -45,33 +48,39 @@ final class ThemeInfo
 
     public function isProtected(): bool
     {
-        return in_array($this->getThemeName(), self::$protectedThemeNames) && 'Rozier' !== $this->getThemeName();
+        return in_array($this->getThemeName(), self::$protectedThemeNames) && $this->getThemeName() !== 'Rozier';
     }
 
     /**
-     * @return class-string
+     * @param string $themeName
      *
+     * @return class-string
      * @throws ThemeClassNotValidException
      */
-    private function guessClassnameFromThemeName(string $themeName): string
+    protected function guessClassnameFromThemeName(string $themeName): string
     {
         $className = match ($themeName) {
             'RozierApp', 'RozierTheme', 'Rozier' => '\\Themes\\Rozier\\RozierApp',
-            default => '\\Themes\\'.$themeName.'\\'.$themeName.'App',
+            default => '\\Themes\\' . $themeName . '\\' . $themeName . 'App',
         };
 
         if (class_exists($className)) {
             return $className;
+        } else {
+            throw new ThemeClassNotValidException(sprintf(
+                '“%s” theme is not available in your project.',
+                $className
+            ));
         }
-        throw new ThemeClassNotValidException(sprintf('“%s” theme is not available in your project.', $className));
     }
 
     /**
      * @param class-string $classname
      *
+     * @return string
      * @throws ThemeClassNotValidException
      */
-    private function extractNameFromClassname(string $classname): string
+    protected function extractNameFromClassname(string $classname): string
     {
         $shortName = $this->getThemeReflectionClass($classname)->getShortName();
 
@@ -80,12 +89,10 @@ final class ThemeInfo
 
     /**
      * @param class-string $classname
-     *
      * @return class-string
-     *
      * @throws ThemeClassNotValidException
      */
-    private function validateClassname(string $classname): string
+    protected function validateClassname(string $classname): string
     {
         if (null !== $reflection = $this->getThemeReflectionClass($classname)) {
             /** @var class-string<AppController> $class */
@@ -94,10 +101,14 @@ final class ThemeInfo
                 return $class::getThemeMainClass();
             }
         }
-        throw new \RuntimeException('Theme class '.$classname.' does not exist.');
+        throw new RuntimeException('Theme class ' . $classname . ' does not exist.');
     }
 
-    private function validateName(string $name): string
+    /**
+     * @param string $name
+     * @return string
+     */
+    protected function validateName(string $name): string
     {
         if (1 !== preg_match('#^[A-Z][a-zA-Z]+$#', $name)) {
             throw new LogicException('Theme name must only contain alphabetical characters and begin with uppercase letter.');
@@ -111,6 +122,7 @@ final class ThemeInfo
     }
 
     /**
+     * @return bool
      * @throws ThemeClassNotValidException
      */
     public function exists(): bool
@@ -119,8 +131,8 @@ final class ThemeInfo
             return true;
         }
         if (
-            $this->filesystem->exists($this->getThemePath())
-            || $this->filesystem->exists($this->projectDir.'/vendor/roadiz/'.$this->getThemeName())
+            $this->filesystem->exists($this->getThemePath()) ||
+            $this->filesystem->exists($this->projectDir . '/vendor/roadiz/' . $this->getThemeName())
         ) {
             return true;
         }
@@ -128,14 +140,14 @@ final class ThemeInfo
         return false;
     }
 
-    private function getProtectedThemePath(): string
+    protected function getProtectedThemePath(): string
     {
-        if ($this->filesystem->exists($this->projectDir.'/vendor/roadiz/'.$this->getThemeName())) {
-            return $this->projectDir.'/vendor/roadiz/'.$this->getThemeName();
-        } elseif ($this->filesystem->exists($this->projectDir.'/themes/'.$this->getThemeName())) {
-            return $this->projectDir.'/themes/'.$this->getThemeName();
+        if ($this->filesystem->exists($this->projectDir . '/vendor/roadiz/' . $this->getThemeName())) {
+            return $this->projectDir . '/vendor/roadiz/' . $this->getThemeName();
+        } elseif ($this->filesystem->exists($this->projectDir . '/themes/' . $this->getThemeName())) {
+            return $this->projectDir . '/themes/' . $this->getThemeName();
         }
-        throw new \InvalidArgumentException($this->getThemeName().' does not exist in project and vendor.');
+        throw new \InvalidArgumentException($this->getThemeName() . ' does not exist in project and vendor.');
     }
 
     /**
@@ -143,8 +155,7 @@ final class ThemeInfo
      *
      * Attention: theme could be located in vendor folder (/vendor/roadiz/roadiz)
      *
-     * @return string theme absolute path
-     *
+     * @return string Theme absolute path.
      * @throws ThemeClassNotValidException
      */
     public function getThemePath(): string
@@ -158,42 +169,45 @@ final class ThemeInfo
                     $this->themePath = $className::getThemeFolder();
                 }
             } else {
-                $this->themePath = $this->projectDir.'/themes/'.$this->getThemeName();
+                $this->themePath = $this->projectDir . '/themes/' . $this->getThemeName();
             }
         }
-
         return $this->themePath;
     }
 
     /**
      * @param class-string|null $className
      *
+     * @return null|ReflectionClass
      * @throws ThemeClassNotValidException
      */
-    public function getThemeReflectionClass(?string $className = null): ?\ReflectionClass
+    public function getThemeReflectionClass(string $className = null): ?ReflectionClass
     {
         try {
             if (null === $className) {
                 $className = $this->getClassname();
             }
-            $reflection = new \ReflectionClass($className);
+            $reflection = new ReflectionClass($className);
             if ($reflection->isSubclassOf(AbstractController::class)) {
                 return $reflection;
             }
-        } catch (\ReflectionException $Exception) {
+        } catch (ReflectionException $Exception) {
             return null;
         }
 
         return null;
     }
 
-    private function getThemeNameFromName(): string
+    /**
+     * @return string
+     */
+    protected function getThemeNameFromName(): string
     {
         if (in_array($this->name, self::$protectedThemeNames)) {
             return $this->name;
         }
 
-        return $this->name.'Theme';
+        return $this->name . 'Theme';
     }
 
     /**
@@ -214,7 +228,6 @@ final class ThemeInfo
 
     /**
      * @return class-string Theme class FQN
-     *
      * @throws ThemeClassNotValidException
      */
     public function getClassname(): string
@@ -222,25 +235,24 @@ final class ThemeInfo
         if (null === $this->classname) {
             $this->classname = $this->guessClassnameFromThemeName($this->getThemeName());
         }
-
         return $this->classname;
     }
 
     /**
+     * @return bool
      * @throws ThemeClassNotValidException
      */
     public function isValid(): bool
     {
         try {
             $className = $this->getClassname();
-            $reflection = new \ReflectionClass($className);
+            $reflection = new ReflectionClass($className);
             if ($reflection->isSubclassOf(AbstractController::class)) {
                 return true;
             }
-        } catch (\ReflectionException $Exception) {
+        } catch (ReflectionException $Exception) {
             return false;
         }
-
         return false;
     }
 }
