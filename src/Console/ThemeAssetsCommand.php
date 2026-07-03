@@ -6,7 +6,6 @@ namespace RZ\Roadiz\CompatBundle\Console;
 
 use RZ\Roadiz\CompatBundle\Theme\ThemeGenerator;
 use RZ\Roadiz\CompatBundle\Theme\ThemeInfo;
-use RZ\Roadiz\CoreBundle\Exception\ThemeClassNotValidException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,16 +13,17 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final class ThemeAssetsCommand extends Command
+class ThemeAssetsCommand extends Command
 {
-    public function __construct(
-        #[Autowire('%kernel.project_dir%')]
-        private readonly string $projectDir,
-        private readonly ThemeGenerator $themeGenerator,
-    ) {
+    protected string $projectDir;
+    protected ThemeGenerator $themeGenerator;
+
+    public function __construct(string $projectDir, ThemeGenerator $themeGenerator)
+    {
         parent::__construct();
+        $this->projectDir = $projectDir;
+        $this->themeGenerator = $themeGenerator;
     }
 
     protected function configure(): void
@@ -41,7 +41,9 @@ final class ThemeAssetsCommand extends Command
     }
 
     /**
-     * @throws ThemeClassNotValidException
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -60,20 +62,18 @@ final class ThemeAssetsCommand extends Command
 
         $themeInfo = new ThemeInfo($name, $this->projectDir);
 
-        if (!$themeInfo->exists()) {
-            throw new InvalidArgumentException($themeInfo->getThemePath().' does not exist.');
+        if ($themeInfo->exists()) {
+            $io->table([
+                'Description', 'Value'
+            ], [
+                ['Given name', $themeInfo->getName()],
+                ['Theme path', $themeInfo->getThemePath()],
+                ['Assets path', $themeInfo->getThemePath() . '/static'],
+            ]);
+
+            $this->themeGenerator->installThemeAssets($themeInfo, $expectedMethod);
+            return 0;
         }
-
-        $io->table([
-            'Description', 'Value',
-        ], [
-            ['Given name', $themeInfo->getName()],
-            ['Theme path', $themeInfo->getThemePath()],
-            ['Assets path', $themeInfo->getThemePath().'/static'],
-        ]);
-
-        $this->themeGenerator->installThemeAssets($themeInfo, $expectedMethod);
-
-        return 0;
+        throw new InvalidArgumentException($themeInfo->getThemePath() . ' does not exist.');
     }
 }

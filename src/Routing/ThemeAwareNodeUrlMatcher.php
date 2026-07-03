@@ -13,18 +13,20 @@ use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 
-final readonly class ThemeAwareNodeUrlMatcher implements UrlMatcherInterface, RequestMatcherInterface, NodeUrlMatcherInterface
+final class ThemeAwareNodeUrlMatcher implements UrlMatcherInterface, RequestMatcherInterface, NodeUrlMatcherInterface
 {
     public function __construct(
-        private ThemeResolverInterface $themeResolver,
-        private NodeUrlMatcher $innerMatcher,
+        private readonly ThemeResolverInterface $themeResolver,
+        private readonly NodeUrlMatcher $innerMatcher
     ) {
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function match(string $pathinfo): array
     {
         $decodedUrl = rawurldecode($pathinfo);
-
         /*
          * Try nodes routes
          */
